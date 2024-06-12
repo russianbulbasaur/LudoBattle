@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1053574719667",
+    "project_id": "ludo-79ca7",
+    "storage_bucket": "ludo-79ca7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1053574719667:android:b55ba0ad7d11366c5528c6",
+        "android_client_info": {
+          "package_name": "ludo.macha.ludo_macha"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBwBofQFra-hQV5qnScmW4BQi9eO1nbRTE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
