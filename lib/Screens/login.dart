@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ludo_macha/blocs/login/LoginBloc.dart';
@@ -89,7 +90,8 @@ class _LoginState extends State<Login> {
       Row(mainAxisAlignment: MainAxisAlignment.center,
         children: [
         Icon(Icons.send),
-        Text("Send")
+        Text("Send"),
+          Visibility(visible: showLoader,child: CircularProgressIndicator())
       ],))
     ],);
   }
@@ -100,12 +102,15 @@ class _LoginState extends State<Login> {
       Text("Enter the otp sent to "+number),
       TextField(controller: otpController,),
       TextButton(onPressed: (){
-        
+        String otp = otpController.text;
+        if(otp.trim().length<6) return;
+        _bloc.add(OtpVerificationEvent(otp));
       },
           child:
       Row(mainAxisAlignment: MainAxisAlignment.center,children: [
         Icon(Icons.lock),
-        Text("Verify")
+        Text("Verify"),
+        Visibility(visible: showLoader,child: CircularProgressIndicator())
       ],))
     ],);
   }
@@ -120,7 +125,8 @@ class _LoginState extends State<Login> {
       }, child:
       Row(mainAxisAlignment: MainAxisAlignment.center,children: [
         Icon(Icons.save),
-        Text("Save")
+        Text("Save"),
+        Visibility(visible: showLoader,child: CircularProgressIndicator())
       ],))
     ],);
   }

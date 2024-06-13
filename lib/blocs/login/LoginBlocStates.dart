@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-import 'package:ludo_macha/login.dart';
+import 'package:ludo_macha/Screens/login.dart';
 
 abstract class LoginBlocState extends Equatable{
   final LoginState enumState;
