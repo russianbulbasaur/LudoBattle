@@ -34,14 +34,12 @@ class _DashboardState extends State<Dashboard> {
           case 1:
             return const Referrals();
           case 2:
-            return const Play();
-          case 3:
             return const History();
-          case 4:
+          case 3:
             return const Support();
         }
         return Text(page.toString());
-      },itemCount: 5
+      },itemCount: 4
       )),
     );
   }

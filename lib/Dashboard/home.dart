@@ -1,14 +1,10 @@
-import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:ludo_macha/Screens/dashboard.dart';
-import 'package:ludo_macha/blocs/dashboard/home/HomeBloc.dart';
-import 'package:ludo_macha/blocs/dashboard/home/HomeState.dart';
+import 'package:ludo_macha/common/IconAndText.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -31,7 +27,13 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(backgroundColor: Colors.black,
+    return SafeArea(child: Scaffold(appBar: AppBar(
+      centerTitle: true,
+      backgroundColor: Theme.of(context).primaryColorDark,
+      title: Text("Dashboard",style: TextStyle(fontSize: 16.sp),),
+      automaticallyImplyLeading: false,
+    ),
+      backgroundColor: Colors.black,
       body:Padding(
       padding: EdgeInsets.all(20.w),
       child: SingleChildScrollView(
@@ -48,20 +50,23 @@ class _HomeState extends State<Home> {
   }
 
   Widget amountCard(){
-    return Card(child: SizedBox(height: MediaQuery.of(context).size.height/3.5,
+    return Card(color: Colors.white10,child:
+    SizedBox(height: MediaQuery.of(context).size.height/3.8,
       child: Column(children: [
         Expanded(flex: 2,child: Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
-          Icon(Icons.abc),
-          SizedBox(width: 40.w,),
-          Text("Hey Ankit\nHere is your balance"),
+            Container(width: 130.h,height: 130.h,padding: EdgeInsets.all(20.w),
+              child: SvgPicture.asset("images/icons/logo.svg"),),
+          SizedBox(width: 0.w,),
+          const Text("Hey Ankit\nHere is your balance"),
         ],),),
         const Divider(),
         Expanded(flex: 1,child: Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
-          const Icon(Icons.monetization_on_rounded),
-          SizedBox(width: 20.w,),
-          const Text("10000.00 RS"),
+          SvgPicture.asset("images/icons/balance.svg",height: 25.w,width: 25.w,),
+          SizedBox(width: 10.w,),
+          TextIcon(text: "100.0", icon: const Icon(Icons.currency_rupee)),
+          SizedBox(width: 3.w,),
           const Icon(Icons.refresh)
         ],),)
       ],),),);
@@ -73,7 +78,7 @@ class _HomeState extends State<Home> {
         style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
             backgroundColor: MaterialStateProperty.all(Colors.transparent),
             shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
-                side: BorderSide(color: Colors.black12,width: 2.3)))), child: Text("Logout",
+                side: const BorderSide(color: Colors.white12,width: 2.3)))), child: Text("Logout",
           style: TextStyle(fontSize: 10.sp,fontWeight: FontWeight.bold,color: Colors.white),));
   }
 
@@ -102,8 +107,11 @@ class _HomeState extends State<Home> {
           style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
               backgroundColor: MaterialStateProperty.all(Colors.transparent),
           shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
-          side: BorderSide(color: Colors.green,width: 2.3)))), child: Text("Deposit",
-          style: TextStyle(fontSize: 10.sp,fontWeight: FontWeight.bold,color: Colors.white),)),
+          side: const BorderSide(color: Colors.green,width: 2.3)))), child:
+          IconText(icon: SvgPicture.asset("images/icons/deposit.svg",width: 20.w,height: 20.w,),
+            text: "Deposit",
+            style: TextStyle(fontSize: 10.sp,
+                fontWeight: FontWeight.bold,color: Colors.white),)),
         ),
         SizedBox(width: 14.w,),
         Expanded(
@@ -111,8 +119,11 @@ class _HomeState extends State<Home> {
               style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
                   backgroundColor: MaterialStateProperty.all(Colors.transparent),
                   shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
-                      side: BorderSide(color: Colors.blue,width: 2.3)))), child: Text("Withdraw",
-                style: TextStyle(fontSize: 10.sp,fontWeight: FontWeight.bold,color: Colors.white),)),
+                      side: const BorderSide(color: Colors.blue,width: 2.3)))), child:
+              IconText(icon: SvgPicture.asset("images/icons/withdraw.svg",width: 20.w,height: 20.w,),
+                text: "Withdraw",
+                style: TextStyle(fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,color: Colors.white),)),
         )
       ],),
       SizedBox(height: 10.h,),
@@ -120,8 +131,11 @@ class _HomeState extends State<Home> {
           style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
               backgroundColor: MaterialStateProperty.all(Colors.transparent),
               shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
-                  side: BorderSide(color: Colors.pink,width: 2.3)))), child: Text("Play Game",
-            style: TextStyle(fontSize: 10.sp,fontWeight: FontWeight.bold,color: Colors.white),))
+                  side: const BorderSide(color: Colors.pink,width: 2.3)))), child:
+          IconText(icon: SvgPicture.asset("images/icons/play.svg",width: 20.w,height: 20.w,),
+            text: "Play Game",
+            style: TextStyle(fontSize: 10.sp,
+                fontWeight: FontWeight.bold,color: Colors.white),))
     ],);
   }
 
