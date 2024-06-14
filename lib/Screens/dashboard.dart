@@ -1,12 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:ludo_macha/Dashboard/history.dart';
 import 'package:ludo_macha/Dashboard/home.dart';
-import 'package:ludo_macha/Dashboard/play.dart';
 import 'package:ludo_macha/Dashboard/referrals.dart';
 import 'package:ludo_macha/Dashboard/support.dart';
 class Dashboard extends StatefulWidget {
@@ -17,7 +14,7 @@ class Dashboard extends StatefulWidget {
 }
 
 class DashboardState extends State<Dashboard> {
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
   static StreamController<int> pageJumper = StreamController.broadcast();
   double iconSize = 26.w;
   @override
@@ -68,7 +65,7 @@ class DashboardState extends State<Dashboard> {
   Widget makeIcon(IconData icon,String text){
     return Column(mainAxisAlignment: MainAxisAlignment.center,children: [
       Icon(icon),
-      Text(text,style: TextStyle(color: Colors.white,
+      Text(text,style: const TextStyle(color: Colors.white,
           fontSize: 10),)
     ],);
   }
@@ -90,8 +87,8 @@ class DashboardState extends State<Dashboard> {
     return SizedBox(width: 40.h,height: 40.h,
       child: FloatingActionButton(onPressed: (){
         Navigator.pushNamed(context, "/play");
-      },child: Icon(Icons.videogame_asset_outlined,color: Colors.white,),
-      shape: CircleBorder(),backgroundColor: Colors.blueAccent,),
+      },
+      shape: const CircleBorder(),backgroundColor: Colors.blueAccent,child: const Icon(Icons.videogame_asset_outlined,color: Colors.white,),),
     );
   }
 

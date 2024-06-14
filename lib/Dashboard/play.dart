@@ -10,7 +10,7 @@ class Play extends StatefulWidget {
 class _PlayState extends State<Play> {
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child:
+    return const SafeArea(child:
     Scaffold(backgroundColor: Colors.lightGreen,));
   }
 }

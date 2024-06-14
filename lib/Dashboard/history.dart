@@ -31,7 +31,7 @@ class _HistoryState extends State<History> {
     return Column(mainAxisSize: MainAxisSize.min,
     children: [
       Container(width: 150.h,height: 150.h,padding: EdgeInsets.all(20.w),
-        child: SvgPicture.asset("images/icons/logo.svg"),),
+        child: Image.asset("images/icons/logo.png")),
       SizedBox(height: 5.h,),
       Row(mainAxisAlignment: MainAxisAlignment.center,
       children: [

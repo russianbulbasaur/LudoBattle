@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:ludo_macha/blocs/login/LoginBloc.dart';
-import 'package:ludo_macha/blocs/login/LoginBlocStates.dart';
-import 'package:ludo_macha/repositories/login/login_repository.dart';
 
 import '../common/CustomAppBar.dart';
 class HistoryPager extends StatefulWidget {
@@ -37,7 +33,7 @@ class _HistoryPagerState extends State<HistoryPager> {
     return Column(mainAxisSize: MainAxisSize.min,
       children: [
         Container(width: 150.h,height: 150.h,padding: EdgeInsets.all(20.w),
-          child: SvgPicture.asset("images/icons/logo.svg"),),
+          child: Image.asset("images/icons/logo.png")),
         SizedBox(height: 5.h,),
         Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [

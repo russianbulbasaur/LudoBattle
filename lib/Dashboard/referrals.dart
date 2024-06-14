@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/Screens/dashboard.dart';
-import 'package:ludo_macha/blocs/login/LoginBloc.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
-import 'package:ludo_macha/repositories/login/login_repository.dart';
 
 import '../common/IconAndText.dart';
 class Referrals extends StatefulWidget {
@@ -21,25 +18,28 @@ class _ReferralsState extends State<Referrals> {
   Widget build(BuildContext context) {
     return Scaffold(backgroundColor: Colors.black,
       appBar: CustomAppBar(title: "Referrals",onBackArrowTap: (){
-        DashboardState.pageJumper.add(2);
+        DashboardState.pageJumper.add(0);
       },),
-    body: Padding(
-      padding: EdgeInsets.all(20.w),
-      child: Column(children: [
-        logo(),
-        const SizedBox(),
-        referralLink(),
-        const SizedBox(),
-        refStats(),
-        const SizedBox(),
-        refList(),
-      ],),
+    body: SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(20.w),
+        child: Column(children: [
+          logo(),
+          const SizedBox(),
+          referralLink(),
+          SizedBox(height: 30.h,),
+          refStats(),
+          SizedBox(height:30.h),
+          refList(),
+          SizedBox(height: 30.h,)
+        ],),
+      ),
     ),);
   }
 
   Widget logo(){
-    return Container(width: 200.h,height: 200.h,padding: EdgeInsets.all(20.w),
-      child: SvgPicture.asset("images/icons/logo.svg"),);
+    return Container(width: 150.h,height: 150.h,padding: EdgeInsets.all(20.w),
+      child: Image.asset("images/icons/logo.png"),);
   }
 
   Widget referralLink(){
@@ -83,9 +83,9 @@ class _ReferralsState extends State<Referrals> {
     return  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
       Expanded(
         child: TextButton(onPressed: (){},
-            style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
-                backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
+            style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
                     side: const BorderSide(color: Color(0xff2AE716),width: 2.3)))), child:
             IconText(icon: Icon(Icons.share,size: 20.w,color: const Color(0xff2AE716),),
               text: "Share Link",
@@ -99,9 +99,9 @@ class _ReferralsState extends State<Referrals> {
       SizedBox(width: 14.w,),
       Expanded(
         child: TextButton(onPressed: (){},
-            style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
-                backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
+            style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
                     side: const BorderSide(color: Color(0xff01A4F5),width: 2.3)))), child:
             IconText(icon: Icon(Icons.copy,size: 20.w,color: const Color(0xff01A4F5),),
               text: "Copy Link",
@@ -130,18 +130,21 @@ class _ReferralsState extends State<Referrals> {
               fontWeight: FontWeight.w300,)),)
       ],),
       SizedBox(height:10.h),
-      Container(decoration: const BoxDecoration(),
-      child: Row(mainAxisAlignment: MainAxisAlignment.center,
+      Container(decoration: BoxDecoration(
+          border: Border.all(color:  Color(0xff282B2E),width: 1.w),
+          borderRadius: BorderRadius.circular(9.86.r)
+      ),padding: EdgeInsets.all(14.w),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
         Column(children: [
           const Text("0"),
           SizedBox(height: 5.h,),
-          Text("Total\nReferrrals",style: GoogleFonts.rubik(
+          Text("Total\nReferrals",style: GoogleFonts.rubik(
               textStyle: TextStyle(
                 color: Colors.grey,
                 fontSize: 16.sp,
                 fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.w300,)),)
+                fontWeight: FontWeight.w300,)),textAlign: TextAlign.center,)
         ],),
           const Divider(),
           Column(children: [
@@ -153,7 +156,7 @@ class _ReferralsState extends State<Referrals> {
                       color: Colors.grey,
                       fontSize: 16.sp,
                       fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w300,)))
+                      fontWeight: FontWeight.w300,)),textAlign: TextAlign.center,)
           ],),
           const Divider(),
           Column(children: [
@@ -164,16 +167,16 @@ class _ReferralsState extends State<Referrals> {
                   color: Colors.grey,
                   fontSize: 16.sp,
                   fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w300,)),)
+                  fontWeight: FontWeight.w300,)),textAlign: TextAlign.center)
           ],),
       ],),)
     ],);
   }
 
   Widget refList(){
-    return Column(mainAxisSize: MainAxisSize.min,
+    return Column(mainAxisSize: MainAxisSize.min,crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.start,children: [
           const Icon(Icons.area_chart),
           SizedBox(width: 5.w,),
           Text("My Top Earning Referrals List",style: GoogleFonts.rubik(
@@ -181,16 +184,18 @@ class _ReferralsState extends State<Referrals> {
                 color: Colors.white,
                 fontSize: 16.sp,
                 fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.w300,)),)
+                fontWeight: FontWeight.w300,)),textAlign: TextAlign.center)
         ],),
-        SizedBox(height:10.h),
-        Text("List of your top earning referrals",style: GoogleFonts.rubik(
+        SizedBox(height:5.h),
+        Text("List of your top earning referrals",textAlign: TextAlign.start,
+          style: GoogleFonts.rubik(
             textStyle: TextStyle(
               color:Colors.grey.shade500,
               fontSize: 14.sp,
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
-        (false)?Table():const Text("No data available")
+        SizedBox(height:20.h),
+        Center(child: (false)?Table():Text("No data available"))
       ],);
   }
 }

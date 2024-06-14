@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
+import 'package:ludo_macha/common/IconAndText.dart';
 
 import '../Screens/dashboard.dart';
 class Support extends StatefulWidget {
@@ -29,23 +30,23 @@ class _SupportState extends State<Support> {
   Widget supportBody(){
     return Column(children: [
       logo(),
-      Divider(),
+      const Divider(),
       supportText(),
-      Divider(),
+      const Divider(),
       contactButton()
     ],);
   }
 
   Widget logo(){
-    return Container(width: 200.h,height: 200.h,padding: EdgeInsets.all(20.w),
-    child: SvgPicture.asset("images/icons/logo.svg"),);
+    return Container(width: 150.h,height: 150.h,padding: EdgeInsets.all(20.w),
+    child:Image.asset("images/icons/logo.png"),);
   }
 
   Widget supportText(){
     return Container(padding: EdgeInsets.only(top: 10.h,bottom: 10.h,
     left: 10.w,right: 10.w),child: Column(children: [
       Row(children: [
-        Icon(Icons.speed),
+        const Icon(Icons.speed),
         SizedBox(width: 5.w,),
         Text("Customer Support",style: GoogleFonts.rubik(
             textStyle: TextStyle(
@@ -71,11 +72,11 @@ class _SupportState extends State<Support> {
     child: Column(children: [
       Expanded(
         child: TextButton(onPressed: (){},
-            style: ButtonStyle(fixedSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
-                backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
-                    side: BorderSide(color: Colors.green,width: 2.3)))), child: Text("Contact Support",
-              style: GoogleFonts.rubik(
+            style: ButtonStyle(fixedSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
+                backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
+                    side: const BorderSide(color: Colors.green,width: 2.3)))), child: IconText(icon: Icon(Icons.support_agent_sharp),
+                text: "Contact Support",style: GoogleFonts.rubik(
                   textStyle: TextStyle(
                     color: Colors.green,
                     fontSize: 13.sp,

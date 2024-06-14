@@ -1,8 +1,5 @@
-import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -22,7 +19,7 @@ class _HomeState extends State<Home> {
   "How to Play"];
   List<String> icons = ["images/icons/referral.svg","images/icons/leaderboard.svg",
   "images/icons/change.svg","images/icons/history.svg","images/icons/support.svg",
-  "images/icons/change.svg"];
+  "images/icons/play.svg"];
   @override
   void initState() {
     super.initState();
@@ -59,22 +56,25 @@ class _HomeState extends State<Home> {
         Expanded(flex: 2,child: Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(width: 130.h,height: 130.h,padding: EdgeInsets.all(20.w),
-              child: SvgPicture.asset("images/icons/balance.svg"),),
+              child: Image.asset("images/icons/logo.png")),
           SizedBox(width: 0.w,),
-            Text("Hey Ankit",
-              style: GoogleFonts.rubik(
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18.sp,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w600,))),
-            Text('Your Wallet Balance is',
-              style: GoogleFonts.rubik(
-                  textStyle: TextStyle(
-                    color: Colors.white,
-                    fontSize: 12.sp,
-                    fontStyle: FontStyle.normal,
-                    fontWeight: FontWeight.w500,)),),
+            Column(mainAxisAlignment:MainAxisAlignment.center,
+              children: [
+              Text("Hey, Ankit",
+                  style: GoogleFonts.rubik(
+                      textStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18.sp,
+                        fontStyle: FontStyle.normal,
+                        fontWeight: FontWeight.w600,))),
+              Text('Your Wallet Balance is',
+                style: GoogleFonts.rubik(
+                    textStyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12.sp,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,)),)
+            ],),
         ],),),
         const Divider(),
         Expanded(flex: 1,child: Row(mainAxisAlignment: MainAxisAlignment.center,
@@ -97,24 +97,29 @@ class _HomeState extends State<Home> {
 
   Widget logout(){
     return TextButton(onPressed: (){},
-        style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
-            backgroundColor: MaterialStateProperty.all(Colors.transparent),
-            shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
-                side: const BorderSide(color: Colors.white12,width: 2.3)))), child: Text("Logout",
-          style: TextStyle(fontSize: 10.sp,fontWeight: FontWeight.bold,color: Colors.white),));
+        style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,44.h)),
+            backgroundColor: WidgetStateProperty.all(Colors.transparent),
+            shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
+                side: const BorderSide(color:Color(0xff282B2E),width: 2.3)))), child: Text("Logout",
+          style: GoogleFonts.rubik(
+              textStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w500,)),));
   }
 
-  Widget optionTile(String text,String icon){
+  Widget optionTile(String text,String icon,int index){
     return Expanded(
-      child: Container(
-        decoration:BoxDecoration(
-            color: const Color(0xff0D1114),
-            border: Border.all(color: Color(0xff282B2E),width: 1.h),
-            borderRadius: BorderRadius.circular(7.78.r)
-        ),height: 100.h,
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 5.h),
-          child: Card(color: Colors.black26,child: Column(mainAxisAlignment: MainAxisAlignment.center,
+      child: GestureDetector(onTap: (){tileTap(index);},
+        child: Container(
+          margin: EdgeInsets.only(bottom: 8.h),
+          decoration:BoxDecoration(
+              color: const Color(0xff0D1114),
+              border: Border.all(color: const Color(0xff282B2E),width: 1.h),
+              borderRadius: BorderRadius.circular(7.78.r)
+          ),height: 100.h,
+          child: Column(mainAxisAlignment: MainAxisAlignment.center,
             children: [
             SvgPicture.asset(icon,width: 30,height: 30,),
             SizedBox(height: 5.h,),
@@ -124,7 +129,7 @@ class _HomeState extends State<Home> {
                   fontSize: 15.sp,
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w700,)),)
-          ],),),
+          ],),
         ),
       ),
     );
@@ -135,12 +140,14 @@ class _HomeState extends State<Home> {
     return Column(mainAxisSize: MainAxisSize.min,children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
         Expanded(
-          child: TextButton(onPressed: (){},
-          style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
-              backgroundColor: MaterialStateProperty.all(Colors.transparent),
-          shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
+          child: TextButton(onPressed: (){
+            Navigator.pushNamed(context, "/deposit");
+          },
+          style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,47.h)),
+              backgroundColor: WidgetStateProperty.all(Colors.transparent),
+          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
           side: const BorderSide(color:Color(0xff2AE716),width: 2.3)))), child:
-          IconText(icon: SvgPicture.asset("images/icons/deposit.svg",width: 20.w,height: 20.w,),
+          IconText(icon: SvgPicture.asset("images/icons/deposit.svg",width: 25.w,height: 25.w,),
             text: "Deposit",
             style: GoogleFonts.rubik(
                 textStyle: TextStyle(
@@ -151,12 +158,14 @@ class _HomeState extends State<Home> {
         ),
         SizedBox(width: 14.w,),
         Expanded(
-          child: TextButton(onPressed: (){},
-              style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
-                  backgroundColor: MaterialStateProperty.all(Colors.transparent),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
+          child: TextButton(onPressed: (){
+            Navigator.pushNamed(context, "/withdraw");
+          },
+              style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,47.h)),
+                  backgroundColor: WidgetStateProperty.all(Colors.transparent),
+                  shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
                       side: const BorderSide(color: Color(0xff01A4F5),width: 2.3)))), child:
-              IconText(icon: SvgPicture.asset("images/icons/withdraw.svg",width: 20.w,height: 20.w,),
+              IconText(icon: SvgPicture.asset("images/icons/withdraw.svg",width: 25.w,height: 25.w,),
                 text: "Withdraw",
                 style: GoogleFonts.rubik(
                     textStyle: TextStyle(
@@ -167,12 +176,14 @@ class _HomeState extends State<Home> {
         )
       ],),
       SizedBox(height: 10.h,),
-      TextButton(onPressed: (){},
-          style: ButtonStyle(minimumSize: MaterialStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
-              backgroundColor: MaterialStateProperty.all(Colors.transparent),
-              shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
+      TextButton(onPressed: (){
+        Navigator.pushNamed(context, "/play");
+      },
+          style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,47.h)),
+              backgroundColor: WidgetStateProperty.all(Colors.transparent),
+              shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
                   side: const BorderSide(color: Color(0xffC42F73),width: 2.3)))), child:
-          IconText(icon: SvgPicture.asset("images/icons/play.svg",width: 20.w,height: 20.w,),
+          IconText(icon: SvgPicture.asset("images/icons/play.svg",width: 23.w,height: 23.w,),
             text: "Play Game",
             style: GoogleFonts.rubik(
                 textStyle: TextStyle(
@@ -186,9 +197,9 @@ class _HomeState extends State<Home> {
   Widget options(){
     return Column(children: [0,2,4].map((index){
       return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
-        optionTile(titles[index], icons[index]),
-        SizedBox(width: 5.w,),
-        optionTile(titles[index+1], icons[index+1])
+        optionTile(titles[index], icons[index],index),
+        SizedBox(width: 10.w,),
+        optionTile(titles[index+1], icons[index+1],index)
       ],);
     }).toList(),);
   }

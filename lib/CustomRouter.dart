@@ -42,7 +42,7 @@ class CustomRouter{
         });
       default:
         return MaterialPageRoute(builder: (context){
-          return Dashboard();
+          return const Dashboard();
         });
     }
   }

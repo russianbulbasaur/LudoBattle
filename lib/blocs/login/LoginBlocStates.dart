@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
-import 'package:ludo_macha/Screens/login.dart';
 
 abstract class LoginBlocState extends Equatable{
   final LoginState enumState;
@@ -13,26 +11,26 @@ enum LoginState{
 }
 
 class PhoneNumberState extends LoginBlocState{
-  PhoneNumberState(super.enumState,super.showLoader);
+  const PhoneNumberState(super.enumState,super.showLoader);
   @override
   List<Object?> get props => [enumState];
 }
 
 class SendingOTPState extends LoginBlocState{
-  SendingOTPState(super.enumState,super.showLoader);
+  const SendingOTPState(super.enumState,super.showLoader);
   @override
   List<Object?> get props => [enumState];
 }
 
 class OTPState extends LoginBlocState{
-  OTPState(super.enumState,super.showLoader);
+  const OTPState(super.enumState,super.showLoader);
   @override
   List<Object?> get props => [enumState];
 }
 
 class ErrorState extends LoginBlocState{
   final String text;
-  ErrorState(super.enumState,super.showLoader,this.text);
+  const ErrorState(super.enumState,super.showLoader,this.text);
 
   @override
   // TODO: implement props
@@ -40,19 +38,19 @@ class ErrorState extends LoginBlocState{
 }
 
 class VerifyingOTPState extends LoginBlocState{
-  VerifyingOTPState(super.enumState,super.showLoader);
+  const VerifyingOTPState(super.enumState,super.showLoader);
   @override
   List<Object?> get props => [enumState];
 }
 
 class NameState extends LoginBlocState{
-  NameState(super.enumState,super.showLoader);
+  const NameState(super.enumState,super.showLoader);
   @override
   List<Object?> get props => [enumState];
 }
 
 class UploadingNameState extends LoginBlocState{
-  UploadingNameState(super.enumState,super.showLoader);
+  const UploadingNameState(super.enumState,super.showLoader);
   @override
   List<Object?> get props => [enumState];
 }
