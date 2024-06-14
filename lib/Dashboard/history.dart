@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:ludo_macha/History/history_pager.dart';
 import 'package:ludo_macha/Screens/dashboard.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
 class History extends StatefulWidget {
@@ -15,7 +17,9 @@ class _HistoryState extends State<History> {
   Widget build(BuildContext context) {
     return SafeArea(child:
     Scaffold(backgroundColor: Colors.black,appBar:
-    CustomAppBar(title:"History"),
+    CustomAppBar(title:"History",onBackArrowTap: (){
+      DashboardState.pageJumper.add(0);
+    },),
     body: Column(children: [
       logo(),
       SizedBox(height: 10.h,),
@@ -54,27 +58,73 @@ class _HistoryState extends State<History> {
   Widget gamesOption(){
     return ListTile(leading: Icon(Icons.gamepad,color: Colors.orange,
     size: 30.w,),
-    title: const Text("Games",style: TextStyle(color: Colors.orange),),
+    title: Text("Games",style: GoogleFonts.rubik(
+        textStyle: TextStyle(
+          color: Colors.orange,
+          fontSize: 16.sp,
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.w500,)),),
       trailing: const Icon(Icons.arrow_forward_ios),
-    subtitle: const Text("List of recently played games"),
+    subtitle: Text("List of recently played games",style: GoogleFonts.rubik(
+        textStyle: TextStyle(
+          color: Colors.white,
+          fontSize: 13.sp,
+          fontStyle: FontStyle.normal,
+          fontWeight: FontWeight.w300,)),),
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context){
+          return const HistoryPager(choice: HistoryEnum.games);
+        }));
+      },
     );
   }
 
   Widget transOption(){
     return ListTile(leading: Icon(Icons.attach_money,color:Colors.green,
     size: 30.w,),
-      title: const Text("Transactions",style: TextStyle(color: Colors.green),),
+      title: Text("Transactions",style: GoogleFonts.rubik(
+          textStyle: TextStyle(
+            color: Colors.green,
+            fontSize: 16.sp,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,)),),
       trailing: const Icon(Icons.arrow_forward_ios),
-      subtitle: const Text("List of past transactions"),
+      subtitle: Text("List of past transactions",
+      style: GoogleFonts.rubik(
+          textStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 13.sp,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w300,)),),
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context){
+          return const HistoryPager(choice: HistoryEnum.transactions);
+        }));
+      },
     );
   }
 
   Widget refOption(){
     return ListTile(leading: Icon(Icons.people_alt_outlined,color:Colors.blueAccent,
     size: 30.w,),
-      title: const Text("Referrals",style: TextStyle(color: Colors.blueAccent),),
+      title: Text("Referrals",style: GoogleFonts.rubik(
+          textStyle: TextStyle(
+            color: Colors.blue,
+            fontSize: 16.sp,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w500,)),),
       trailing: const Icon(Icons.arrow_forward_ios),
-      subtitle: const Text("Referrals joined under you"),
+      subtitle: Text("Referrals joined under you",style: GoogleFonts.rubik(
+          textStyle: TextStyle(
+            color: Colors.white,
+            fontSize: 13.sp,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w300,)),),
+      onTap: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context){
+          return const HistoryPager(choice: HistoryEnum.referrals);
+        }));
+      },
     );
   }
 

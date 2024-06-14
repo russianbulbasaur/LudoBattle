@@ -39,6 +39,7 @@ dependencies:
   flutter_bloc: ^8.1.5
   flutter_screenutil: ^5.9.3
   equatable: ^2.0.5
+  google_fonts: ^6.2.1
   firebase_core: ^3.1.0
   firebase_auth: ^5.1.0
   lottie: ^3.1.2

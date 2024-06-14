@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,14 +13,18 @@ class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<Dashboard> createState() => DashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class DashboardState extends State<Dashboard> {
   PageController _pageController = PageController();
+  static StreamController<int> pageJumper = StreamController.broadcast();
   double iconSize = 26.w;
   @override
   void initState() {
+    pageJumper.stream.listen((event) {
+      _pageController.jumpToPage(event);
+    });
     super.initState();
   }
 
@@ -27,6 +33,7 @@ class _DashboardState extends State<Dashboard> {
     return SafeArea(
       child: Scaffold(backgroundColor: Colors.white,bottomNavigationBar: bottomNav(),
       body: PageView.builder(controller: _pageController,
+      physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (context,page){
         switch(page){
           case 0:
@@ -90,14 +97,14 @@ class _DashboardState extends State<Dashboard> {
 
   Widget optionHistory(){
     return GestureDetector(onTap: (){
-      _pageController.jumpToPage(3);
+      _pageController.jumpToPage(2);
     },child: makeIcon(Icons.history_edu,"History"),);
   }
 
 
   Widget optionSupport(){
     return GestureDetector(onTap: (){
-      _pageController.jumpToPage(4);
+      _pageController.jumpToPage(3);
     },child: makeIcon(Icons.support_agent,"Support"),);
   }
 }

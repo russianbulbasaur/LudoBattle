@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
+
+import '../Screens/dashboard.dart';
 class Support extends StatefulWidget {
   const Support({super.key});
 
@@ -15,7 +18,9 @@ class _SupportState extends State<Support> {
     return SafeArea(
       child: Scaffold(
         backgroundColor: Colors.black,
-        appBar: CustomAppBar(title: "Support",),
+        appBar: CustomAppBar(title: "Support",onBackArrowTap: (){
+          DashboardState.pageJumper.add(3);
+        },),
         body: supportBody(),
       ),
     );
@@ -42,10 +47,21 @@ class _SupportState extends State<Support> {
       Row(children: [
         Icon(Icons.speed),
         SizedBox(width: 5.w,),
-        Text("Customer Support")
+        Text("Customer Support",style: GoogleFonts.rubik(
+            textStyle: TextStyle(
+              color: Colors.white,
+              fontSize: 16.sp,
+              fontStyle: FontStyle.normal,
+              fontWeight: FontWeight.w400,)),)
       ],),
       SizedBox(height : 10.h),
-      Text("Create A Support Ticket, if you have a problem with a game,\ndeposit or withdrawal. Our team will get back to you ASAP."),
+      Text("Create A Support Ticket, if you have a problem with a game,\ndeposit or withdrawal. Our team will get back to you ASAP.",
+      style: GoogleFonts.rubik(
+          textStyle: TextStyle(
+            color:Colors.grey.shade500,
+            fontSize: 12.sp,
+            fontStyle: FontStyle.normal,
+            fontWeight: FontWeight.w200,)),),
       SizedBox(height: 10.h,)
     ],),);
   }
@@ -59,7 +75,12 @@ class _SupportState extends State<Support> {
                 backgroundColor: MaterialStateProperty.all(Colors.transparent),
                 shape: MaterialStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
                     side: BorderSide(color: Colors.green,width: 2.3)))), child: Text("Contact Support",
-              style: TextStyle(fontSize: 10.sp,fontWeight: FontWeight.bold,color: Colors.white),)),
+              style: GoogleFonts.rubik(
+                  textStyle: TextStyle(
+                    color: Colors.green,
+                    fontSize: 13.sp,
+                    fontStyle: FontStyle.normal,
+                    fontWeight: FontWeight.w300,)),)),
       ),
       SizedBox(height: 5.h,),
       const Text("We will get back to you ASAP.")
