@@ -164,7 +164,7 @@ class _LoginState extends State<Login> {
               fontWeight: FontWeight.w200,)),),
         SizedBox(height: 10.h,),
         TextField(maxLength: 6,controller: otpController,
-          decoration: InputDecoration(border: OutlineInputBorder(
+          decoration: InputDecoration(counterText: "",border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)
           ),hintText: "Enter OTP",focusedBorder: OutlineInputBorder(

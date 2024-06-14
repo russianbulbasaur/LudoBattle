@@ -25,7 +25,6 @@ class _WithdrawState extends State<Withdraw> {
         padding: EdgeInsets.all(10.w),
         child: Column(children: [
           logo(),
-          SizedBox(height: 10.h,),
           amountBoxes(),
           SizedBox(height: 10.h,),
           amountAndUpi(),
@@ -63,7 +62,7 @@ class _WithdrawState extends State<Withdraw> {
         TextField(keyboardType: TextInputType.phone,
           controller: amountController,
           maxLength: 10,
-          decoration: InputDecoration(border: OutlineInputBorder(
+          decoration: InputDecoration(counterText: "",border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)
           ),hintText: "Amount",focusedBorder: OutlineInputBorder(
@@ -74,7 +73,7 @@ class _WithdrawState extends State<Withdraw> {
         TextField(
           controller: upiController,
           maxLength: 10,
-          decoration: InputDecoration(border: OutlineInputBorder(
+          decoration: InputDecoration(counterText: "",border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)
           ),hintText: "Enter UPI Id",focusedBorder: OutlineInputBorder(
@@ -114,8 +113,9 @@ class _WithdrawState extends State<Withdraw> {
 
   Widget amountBoxes() {
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
-      Expanded(flex: 1,child: Container(decoration: BoxDecoration(
-        color: Colors.blueAccent.withOpacity(0.3)
+      Expanded(flex: 1,child: Container(height: 70.h,decoration: BoxDecoration(
+        color: Colors.blueAccent.withOpacity(0.2),
+        borderRadius: BorderRadius.circular(8.r)
       ),
         child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,children: [
@@ -129,10 +129,13 @@ class _WithdrawState extends State<Withdraw> {
                 fontWeight: FontWeight.w500,)),)
         ],),),
       ),),
-      Expanded(flex: 1,child: Container(decoration: BoxDecoration(
-          color: Colors.green.withOpacity(0.3)
+      SizedBox(width: 4.w,),
+      Expanded(flex: 1,child: Container(height:70.h,decoration: BoxDecoration(
+          color: Colors.green.withOpacity(0.2),
+          borderRadius: BorderRadius.circular(8.r)
       ),
-        child: Center(child: Column(mainAxisSize: MainAxisSize.max,children: [
+        child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,children: [
           Text("Withdrawable"),
           SizedBox(height: 4.h,),
           Text("10.00",style: GoogleFonts.rubik(

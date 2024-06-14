@@ -64,7 +64,7 @@ class _DepositState extends State<Deposit> {
         TextField(keyboardType: TextInputType.phone,
           controller: amountController,
           maxLength: 10,
-          decoration: InputDecoration(border: OutlineInputBorder(
+          decoration: InputDecoration(counterText: "",border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)
           ),hintText: "Amount",focusedBorder: OutlineInputBorder(

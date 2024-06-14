@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
               colorScheme: const ColorScheme.dark()
           ),
           onGenerateRoute: CustomRouter.generateRoute,
-          initialRoute: "/logins",
+          initialRoute: "/login",
         );
       },
     );
