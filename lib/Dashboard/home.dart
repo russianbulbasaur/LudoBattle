@@ -199,7 +199,7 @@ class _HomeState extends State<Home> {
       return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
         optionTile(titles[index], icons[index],index),
         SizedBox(width: 10.w,),
-        optionTile(titles[index+1], icons[index+1],index)
+        optionTile(titles[index+1], icons[index+1],index+1)
       ],);
     }).toList(),);
   }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/Screens/dashboard.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../common/IconAndText.dart';
 class Referrals extends StatefulWidget {
@@ -14,27 +15,32 @@ class Referrals extends StatefulWidget {
 }
 
 class _ReferralsState extends State<Referrals> {
+
+  String refLink = "Random stuff";
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: Colors.black,
-      appBar: CustomAppBar(title: "Referrals",onBackArrowTap: (){
-        DashboardState.pageJumper.add(0);
-      },),
-    body: SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(20.w),
-        child: Column(children: [
-          logo(),
-          const SizedBox(),
-          referralLink(),
-          SizedBox(height: 30.h,),
-          refStats(),
-          SizedBox(height:30.h),
-          refList(),
-          SizedBox(height: 30.h,)
-        ],),
-      ),
-    ),);
+    return SafeArea(
+      child: Scaffold(backgroundColor: Colors.black,
+        appBar: CustomAppBar(title: "Referrals",onBackArrowTap: (){
+          DashboardState.pageJumper.add(0);
+        },),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(children: [
+            logo(),
+            const SizedBox(),
+            referralLink(),
+            SizedBox(height: 30.h,),
+            refStats(),
+            SizedBox(height:30.h),
+            refList(),
+            SizedBox(height: 30.h,)
+          ],),
+        ),
+      ),),
+    );
   }
 
   Widget logo(){
@@ -82,7 +88,9 @@ class _ReferralsState extends State<Referrals> {
   Widget buttons(){
     return  Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
       Expanded(
-        child: TextButton(onPressed: (){},
+        child: TextButton(onPressed: (){
+          Share.share(refLink);
+        },
             style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
                 backgroundColor: WidgetStateProperty.all(Colors.transparent),
                 shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
@@ -98,7 +106,9 @@ class _ReferralsState extends State<Referrals> {
       ),
       SizedBox(width: 14.w,),
       Expanded(
-        child: TextButton(onPressed: (){},
+        child: TextButton(onPressed: (){
+          Clipboard.setData(ClipboardData(text: refLink));
+        },
             style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
                 backgroundColor: WidgetStateProperty.all(Colors.transparent),
                 shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
@@ -131,7 +141,7 @@ class _ReferralsState extends State<Referrals> {
       ],),
       SizedBox(height:10.h),
       Container(decoration: BoxDecoration(
-          border: Border.all(color:  Color(0xff282B2E),width: 1.w),
+          border: Border.all(color:  const Color(0xff282B2E),width: 1.w),
           borderRadius: BorderRadius.circular(9.86.r)
       ),padding: EdgeInsets.all(14.w),
       child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -195,7 +205,7 @@ class _ReferralsState extends State<Referrals> {
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
         SizedBox(height:20.h),
-        Center(child: (false)?Table():Text("No data available"))
+        Center(child: (false)?Table():const Text("No data available"))
       ],);
   }
 }

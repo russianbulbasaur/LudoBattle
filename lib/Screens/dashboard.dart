@@ -27,24 +27,33 @@ class DashboardState extends State<Dashboard> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(backgroundColor: Colors.white,bottomNavigationBar: bottomNav(),
-      body: PageView.builder(controller: _pageController,
-      physics: const NeverScrollableScrollPhysics(),
-      itemBuilder: (context,page){
-        switch(page){
-          case 0:
-            return const Home();
-          case 1:
-            return const Referrals();
-          case 2:
-            return const History();
-          case 3:
-            return const Support();
+    return PopScope(
+      onPopInvoked: (val){
+        if(_pageController.page==0) {
+          Navigator.pop(context);
+        } else {
+          _pageController.jumpToPage(0);
         }
-        return Text(page.toString());
-      },itemCount: 4
-      )),
+      },
+      child: SafeArea(
+        child: Scaffold(backgroundColor: Colors.white,bottomNavigationBar: bottomNav(),
+        body: PageView.builder(controller: _pageController,
+        physics: const NeverScrollableScrollPhysics(),
+        itemBuilder: (context,page){
+          switch(page){
+            case 0:
+              return const Home();
+            case 1:
+              return const Referrals();
+            case 2:
+              return const History();
+            case 3:
+              return const Support();
+          }
+          return Text(page.toString());
+        },itemCount: 4
+        )),
+      ),
     );
   }
 

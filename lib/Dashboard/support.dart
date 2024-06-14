@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
 import 'package:ludo_macha/common/IconAndText.dart';
@@ -75,10 +74,11 @@ class _SupportState extends State<Support> {
             style: ButtonStyle(fixedSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,40.h)),
                 backgroundColor: WidgetStateProperty.all(Colors.transparent),
                 shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
-                    side: const BorderSide(color: Colors.green,width: 2.3)))), child: IconText(icon: Icon(Icons.support_agent_sharp),
+                    side: const BorderSide(color: Color(0xff2AE716),width: 2.3)))),
+            child: IconText(icon: const Icon(Icons.support_agent_sharp,color: Color(0xff2AE716),),
                 text: "Contact Support",style: GoogleFonts.rubik(
                   textStyle: TextStyle(
-                    color: Colors.green,
+                    color: Color(0xff2AE716),
                     fontSize: 13.sp,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w300,)),)),

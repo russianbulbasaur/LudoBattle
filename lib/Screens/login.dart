@@ -1,12 +1,14 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/blocs/login/LoginBloc.dart';
 import 'package:ludo_macha/blocs/login/LoginBlocEvents.dart';
 import 'package:ludo_macha/blocs/login/LoginBlocStates.dart';
 import 'package:ludo_macha/repositories/login/login_repository.dart';
+
+import '../common/ErrorDialog.dart';
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -54,10 +56,14 @@ class _LoginState extends State<Login> {
   Widget infoBoxContent(){
     return BlocConsumer<LoginBloc,LoginBlocState>(
       listener: (context,state){
-        errorDialog((state as ErrorState).text);
+        errorDialog((state as ErrorState).text,context);
       },
       listenWhen: (prev,curr){
-        return curr.enumState==LoginState.errorState;
+        if(curr.enumState==LoginState.errorState){
+          _bloc.add(ResetState(prev));
+          return true;
+        }
+        return false;
       },
       builder: (context,state){
         _bloc = context.read<LoginBloc>();
@@ -82,7 +88,7 @@ class _LoginState extends State<Login> {
   }
   
   Widget phoneNumberContent(bool showLoader){
-    return Container(decoration: BoxDecoration(color: Colors.black26),
+    return Container(decoration: const BoxDecoration(color: Colors.black26),
       padding: EdgeInsets.all(10.w),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
         Text("Enter phone number",style: GoogleFonts.rubik(
@@ -101,6 +107,7 @@ class _LoginState extends State<Login> {
         SizedBox(height: 10.h,),
         TextField(keyboardType: TextInputType.phone,
           controller: phoneController,
+        maxLength: 10,
         decoration: InputDecoration(border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
           borderSide: BorderSide(color: Colors.black12,width: 1.w)
@@ -112,7 +119,10 @@ class _LoginState extends State<Login> {
         TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
           backgroundColor: WidgetStateProperty.all(Colors.blue),
         ),onPressed: (){
-          if(phoneController.text.trim().isEmpty) return;
+          if(phoneController.text.trim().length<10){
+            errorDialog("Invalid phone number",context);
+            return;
+          }
           _bloc.add(OtpRequestedEvent(phoneController.text,_bloc));
         }, child:
         Row(mainAxisAlignment: MainAxisAlignment.center,
@@ -128,7 +138,7 @@ class _LoginState extends State<Login> {
             SizedBox(width: 10.w,),
             Visibility(visible: showLoader,child: SizedBox(width: 10.w,
             height: 10.h
-            ,child: CircularProgressIndicator(color: Colors.white,)))
+            ,child: const CircularProgressIndicator(color: Colors.white,)))
         ],))
       ],),
     );
@@ -136,7 +146,7 @@ class _LoginState extends State<Login> {
 
 
   Widget otpContent(bool showLoader,number){
-    return Container(decoration: BoxDecoration(color: Colors.black26),
+    return Container(decoration: const BoxDecoration(color: Colors.black26),
       padding: EdgeInsets.all(10.w),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
         Text("Enter the otp",style: GoogleFonts.rubik(
@@ -153,7 +163,7 @@ class _LoginState extends State<Login> {
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
         SizedBox(height: 10.h,),
-        TextField(controller: otpController,
+        TextField(maxLength: 6,controller: otpController,
           decoration: InputDecoration(border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)
@@ -182,14 +192,14 @@ class _LoginState extends State<Login> {
             SizedBox(width: 10.w,),
             Visibility(visible: showLoader,child: SizedBox(width: 10.w,
                 height: 10.h
-                ,child: CircularProgressIndicator(color: Colors.white,)))
+                ,child: const CircularProgressIndicator(color: Colors.white,)))
           ],))
       ],),
     );
   }
   
   Widget nameContent(bool showLoader){
-    return Container(decoration: BoxDecoration(color: Colors.black26),
+    return Container(decoration: const BoxDecoration(color: Colors.black26),
       padding: EdgeInsets.all(10.w),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
         Text("Enter a nickname",style: GoogleFonts.rubik(
@@ -234,30 +244,10 @@ class _LoginState extends State<Login> {
             SizedBox(width: 10.w,),
             Visibility(visible: showLoader,child: SizedBox(width: 10.w,
                 height: 10.h
-                ,child: CircularProgressIndicator(color: Colors.white,)))
+                ,child: const CircularProgressIndicator(color: Colors.white,)))
           ],))
       ],),
     );
-  }
-  
-  void errorDialog(String text){
-    showDialog(context: context, builder: (context){
-      return AlertDialog(
-        backgroundColor: Colors.white,content: Column(mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-        Text(text,style:GoogleFonts.rubik(
-          color: Colors.red,
-            fontWeight: FontWeight.w500
-        )),
-        TextButton(onPressed: (){
-          Navigator.pop(context);
-        },style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.black45)),child: Text("OK",style: GoogleFonts.rubik(
-          color: Colors.red,
-          fontWeight: FontWeight.bold
-        ),))
-      ],),);
-    });
   }
 
 }

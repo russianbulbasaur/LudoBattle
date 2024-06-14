@@ -11,7 +11,7 @@ class LoginBloc extends Bloc<LoginBlocEvent,LoginBlocState>{
       repo.sendOTP(event.phone,event.bloc);
     });
     on<OTPVerificationFailedEvent>((event,emit) => emit(const ErrorState(LoginState.errorState,
-        false, "Failed to send otp")));
+        false, "Failed to verify otp")));
     on<OTPSentEvent>((event,emit) => emit(const OTPState(LoginState.otp, true)));
     on<OtpVerificationEvent>((event,emit) => emit(const VerifyingOTPState(LoginState.verifyingOTP, true)));
     on<OTPVerifiedEvent>((event,emit) => emit(const NameState(LoginState.name, true)));
@@ -19,5 +19,6 @@ class LoginBloc extends Bloc<LoginBlocEvent,LoginBlocState>{
     on<NameUploadedEvent>((event,emit){
 
     });
+    on<ResetState>((event,emit) => emit(event.prev));
   }
 }
