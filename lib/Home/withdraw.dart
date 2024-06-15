@@ -119,7 +119,7 @@ class _WithdrawState extends State<Withdraw> {
       ),
         child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,children: [
-          Text("Deposit"),
+          const Text("Deposit"),
           SizedBox(height: 4.h,),
           Text("0.00",style: GoogleFonts.rubik(
               textStyle: TextStyle(
@@ -136,7 +136,7 @@ class _WithdrawState extends State<Withdraw> {
       ),
         child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,children: [
-          Text("Withdrawable"),
+          const Text("Withdrawable"),
           SizedBox(height: 4.h,),
           Text("10.00",style: GoogleFonts.rubik(
               textStyle: TextStyle(

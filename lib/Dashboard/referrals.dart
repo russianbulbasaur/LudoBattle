@@ -206,7 +206,7 @@ class _ReferralsState extends State<Referrals> {
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
         SizedBox(height:20.h),
-        Center(child: CustomTable(height: 200.h,columnHeaders: ["ID","Name","","Commission"],
+        Center(child: CustomTable(height: 200.h,columnHeaders: const ["ID","Name","","Commission"],
         data: List.filled(20, {}),))
       ],);
   }

@@ -13,7 +13,7 @@ class CustomTable extends StatefulWidget {
 class _CustomTableState extends State<CustomTable> {
   @override
   Widget build(BuildContext context) {
-    return Container(height: widget.height,child:
+    return SizedBox(height: widget.height,child:
       ListView.builder(cacheExtent: 100,itemBuilder: (context,index){
         if(index==0) return headers();
         return dataTile(widget.data[index-1]);

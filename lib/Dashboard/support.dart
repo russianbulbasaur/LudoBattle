@@ -78,7 +78,7 @@ class _SupportState extends State<Support> {
             child: IconText(icon: const Icon(Icons.support_agent_sharp,color: Color(0xff2AE716),),
                 text: "Contact Support",style: GoogleFonts.rubik(
                   textStyle: TextStyle(
-                    color: Color(0xff2AE716),
+                    color: const Color(0xff2AE716),
                     fontSize: 13.sp,
                     fontStyle: FontStyle.normal,
                     fontWeight: FontWeight.w300,)),)),

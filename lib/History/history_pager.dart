@@ -53,17 +53,17 @@ class _HistoryPagerState extends State<HistoryPager> {
       case HistoryEnum.games:
         return Expanded(
           child: CustomTable(height: height,
-              columnHeaders: ["ID","Winner","","Amount"], data: List.filled(20, {"":""})),
+              columnHeaders: const ["ID","Winner","","Amount"], data: List.filled(20, {"":""})),
         );
       case HistoryEnum.referrals:
         return Expanded(
           child: CustomTable(height: height,
-              columnHeaders: ["User ID","Name","","Date"], data: List.filled(20, {"":""})),
+              columnHeaders: const ["User ID","Name","","Date"], data: List.filled(20, {"":""})),
         );
       case HistoryEnum.transactions:
         return Expanded(
           child: CustomTable(height: height,
-              columnHeaders: ["ID","Date","","Amount"], data: List.filled(20, {})),
+              columnHeaders: const ["ID","Date","","Amount"], data: List.filled(20, {})),
         );
     }
   }

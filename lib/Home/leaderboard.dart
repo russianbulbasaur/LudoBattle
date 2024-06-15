@@ -23,7 +23,7 @@ class _LeaderboardState extends State<Leaderboard> {
         textInfo(),
         SizedBox(height: 20.h,),
         Expanded(
-          child: CustomTable(height: MediaQuery.of(context).size.height/2.7, columnHeaders: ["Rank","Name","","Price"],
+          child: CustomTable(height: MediaQuery.of(context).size.height/2.7, columnHeaders: const ["Rank","Name","","Price"],
               data: List.filled(20, {})),
         )
       ],),

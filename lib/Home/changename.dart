@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
 
-import '../common/ErrorDialog.dart';
 import '../common/IconAndText.dart';
 class ChangeName extends StatefulWidget {
   const ChangeName({super.key});
