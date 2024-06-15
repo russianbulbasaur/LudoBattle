@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/Screens/dashboard.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
+import 'package:ludo_macha/common/CustomTable.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../common/IconAndText.dart';
@@ -36,7 +37,7 @@ class _ReferralsState extends State<Referrals> {
             refStats(),
             SizedBox(height:30.h),
             refList(),
-            SizedBox(height: 30.h,)
+            SizedBox(height: 10.h,)
           ],),
         ),
       ),),
@@ -205,7 +206,8 @@ class _ReferralsState extends State<Referrals> {
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
         SizedBox(height:20.h),
-        Center(child: (false)?Table():const Text("No data available"))
+        Center(child: CustomTable(height: 200.h,columnHeaders: ["ID","Name","","Commission"],
+        data: List.filled(20, {}),))
       ],);
   }
 }

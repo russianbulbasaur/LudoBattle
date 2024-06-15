@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ludo_macha/common/CustomTable.dart';
 
 import '../common/CustomAppBar.dart';
 class HistoryPager extends StatefulWidget {
@@ -19,11 +20,14 @@ class _HistoryPagerState extends State<HistoryPager> {
         appBar: CustomAppBar(title: widget.choice.getTitle(),onBackArrowTap: (){
           Navigator.pop(context);
         },),
-        body: Column(children: [
-          logo(),
-          SizedBox(height: 10.h,),
-          dataList()
-        ],),
+        body: Padding(
+          padding: EdgeInsets.all(10.h),
+          child: Column(children: [
+            logo(),
+            SizedBox(height: 10.h,),
+            dataList()
+          ],),
+        ),
       ),
     );
   }
@@ -44,7 +48,24 @@ class _HistoryPagerState extends State<HistoryPager> {
   }
 
   Widget dataList(){
-    return Text(widget.choice.getDefaultText());
+    double height = MediaQuery.of(context).size.height/1.8;
+    switch(widget.choice){
+      case HistoryEnum.games:
+        return Expanded(
+          child: CustomTable(height: height,
+              columnHeaders: ["ID","Winner","","Amount"], data: List.filled(20, {"":""})),
+        );
+      case HistoryEnum.referrals:
+        return Expanded(
+          child: CustomTable(height: height,
+              columnHeaders: ["User ID","Name","","Date"], data: List.filled(20, {"":""})),
+        );
+      case HistoryEnum.transactions:
+        return Expanded(
+          child: CustomTable(height: height,
+              columnHeaders: ["ID","Date","","Amount"], data: List.filled(20, {})),
+        );
+    }
   }
 }
 
