@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:ludo_macha/Models/Game.dart';
 import 'package:ludo_macha/Models/LiveGame.dart';
+import 'package:ludo_macha/Screens/ViewGame.dart';
 import 'package:ludo_macha/blocs/play/OpenChallengesBloc.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
 import 'package:ludo_macha/common/IconAndText.dart';
@@ -65,7 +66,7 @@ class _PlayState extends State<Play> {
     );
   }
 
-  Widget openChallenges(){ 
+  Widget openChallenges(){
     return BlocBuilder<OpenChallengesBloc,List<Game>>(
       builder: (context,state){
         return Column(mainAxisSize: MainAxisSize.min,
@@ -133,10 +134,14 @@ class _PlayState extends State<Play> {
           ],)
         ],),
         Spacer(),
-        TextButton(onPressed: (){},style: ButtonStyle(backgroundColor:
-        WidgetStateProperty.all(Colors.lightBlue),shape:
-        WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
-          child: Text("\t\t\tAccept\t\t\t",style: GoogleFonts.rubik(color: Colors.white)))
+      TextButton(onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context){
+          return ViewGame(game: game);
+        }));
+      },style: ButtonStyle(backgroundColor:
+      WidgetStateProperty.all((game.type==GameType.host)?Colors.red:Colors.lightBlue),shape:
+      WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
+          child: Text((game.type==GameType.host)?"\t\t\tCancel\t\t\t":"\t\t\tAccept\t\t\t",style: GoogleFonts.rubik(color: Colors.white)))
       ],),);
   }
 
@@ -238,12 +243,12 @@ class _PlayState extends State<Play> {
   }
 
   Widget rankFab(){
-    return GestureDetector(onTap: (){
+    return FloatingActionButton(onPressed: (){
       Navigator.pushNamed(context, "/leaderboard");
-    },child: FloatingActionButton(onPressed: (){},shape: const CircleBorder(),
+    },shape: const CircleBorder(),
       child:
       Container(decoration: BoxDecoration(shape: BoxShape.circle,
       border: Border.all(width: 1.h,color: Colors.yellowAccent),color: Colors.green),
-      child: const Center(child: Text("No\nRank",textAlign: TextAlign.center,),),),));
+      child: const Center(child: Text("No\nRank",textAlign: TextAlign.center,),),),);
   }
 }

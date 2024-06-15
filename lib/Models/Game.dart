@@ -9,6 +9,10 @@ class Game{
   int hostId = 0;
   String hostName = "";
   double cost = 0;
+  String player1 = "";
+  String player2 = "";
+  DateTime gameDate = DateTime.now();
+
   Game(this.id,this.type,this.winning,this.hostName);
 
   Game.fromJson(String json,User user){
