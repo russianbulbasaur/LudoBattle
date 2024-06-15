@@ -26,7 +26,11 @@ class _CustomTableState extends State<CustomTable> {
         borderRadius: BorderRadius.circular(5.r)),child:
     Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: widget.columnHeaders.map((e){
-      return SizedBox(width: 40.w,child: Flexible(child: Text(textAlign: TextAlign.center,e)));
+      return Center(
+        child: SizedBox(width: 70.w,
+          child: Text(textAlign: TextAlign.center,e),
+        ),
+      );
     }).toList(),),);
   }
 
@@ -36,7 +40,9 @@ class _CustomTableState extends State<CustomTable> {
           border: Border(bottom: BorderSide(width: 1.h,color: Colors.white38))),child:
       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: widget.columnHeaders.map((e){
-          return SizedBox(width: 40.w,child: Flexible(child: Text(textAlign: TextAlign.center,data[e].toString())));
+          return SizedBox(width: 40.w,child: Flex(direction: Axis.horizontal,
+              children:
+              [Flexible(child: Text(textAlign: TextAlign.center,data[e].toString()))]));
         }).toList(),),);
   }
 }

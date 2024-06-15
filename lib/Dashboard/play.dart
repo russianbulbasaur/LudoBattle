@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
+import 'package:ludo_macha/Models/Game.dart';
+import 'package:ludo_macha/Models/LiveGame.dart';
+import 'package:ludo_macha/blocs/play/OpenChallengesBloc.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
 import 'package:ludo_macha/common/IconAndText.dart';
 
+import '../blocs/play/LiveGamesBloc.dart';
 import '../common/ErrorDialog.dart';
 
 class Play extends StatefulWidget {
@@ -26,72 +32,85 @@ class _PlayState extends State<Play> {
     },),body: SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(10.h),
-        child: Column(children: [
-          adPager(),
-          SizedBox(height: 10.h,),
-          host(),
-          SizedBox(height: 10.h,),
-          openChallenges(),
-          SizedBox(height: 10.h,),
-          liveChallenges()
-        ],),
+        child: MultiBlocProvider(providers: [
+          BlocProvider(create: (context) => OpenChallengesBloc()),
+          BlocProvider(create: (context) => LiveGamesBloc())
+        ],
+          child: Column(children: [
+            ludoLottie(),
+            SizedBox(height: 10.h,),
+            host(),
+            SizedBox(height: 10.h,),
+            openChallenges(),
+            SizedBox(height: 10.h,),
+            liveGames()
+          ],),
+        ),
       ),
     ),));
   }
 
-  Widget adPager(){
+  Widget ludoLottie(){
     return SizedBox(height: 80.h,
-      child: PageView(children: [
-        Container(color: Colors.blue,),
-        Container(color: Colors.red,),
-        Container(color: Colors.yellowAccent,)
-      ],),
+      child: StreamBuilder(stream: Future.delayed(Duration(seconds: 1),() {
+        return 0;
+      },).asStream(),
+        builder: (context,snap){
+           return (snap.hasData && snap.data==0)?LottieBuilder.asset("images/ludo.json",
+             repeat: false,
+           ):
+           Container();
+        },
+      ),
     );
   }
 
   Widget openChallenges(){ 
-    return Column(mainAxisSize: MainAxisSize.min,
-    children: [
-      Container(height: 46.h,decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        color: Colors.white10
-      ),padding: EdgeInsets.all(10.w),
-      child: Row(children: [
-        SizedBox(width: 10.w,),
-        const Icon(Icons.arrow_forward_rounded,color: Colors.green,),
-        SizedBox(width: 3.w,),
-        Text("Open challenges",style: GoogleFonts.rubik(
-          color: Colors.green
-        ),),
-        const Spacer(),
-        TextButton(onPressed: (){dummy.removeLast();
-          setState(() {
-
-          });},style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white10),shape:
-        WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
-          child: IconText(icon:  Icon(Icons.refresh,size: 15.w,color: Colors.white,),
-        text: "Reload",style: GoogleFonts.rubik(color: Colors.white)),),
-        SizedBox(width: 10.w,)
-      ],),),
-      SizedBox(height: 10.h,),
-      Column(mainAxisSize: MainAxisSize.min,
-      children: dummy.map((e){
-        return Padding(
-          padding: EdgeInsets.only(bottom: 3.h),
-          child: openChallengeTile(e),
-        );
-      }).toList(),)
-    ],);
+    return BlocBuilder<OpenChallengesBloc,List<Game>>(
+      builder: (context,state){
+        return Column(mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(height: 46.h,decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.r),
+                color: Colors.white10
+            ),padding: EdgeInsets.all(10.w),
+              child: Row(children: [
+                SizedBox(width: 10.w,),
+                const Icon(Icons.arrow_forward_rounded,color: Colors.green,),
+                SizedBox(width: 3.w,),
+                Text("Open challenges",style: GoogleFonts.rubik(
+                    color: Colors.green
+                ),),
+                const Spacer(),
+                TextButton(onPressed: (){},style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white10),shape:
+                WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
+                  child: IconText(icon:  Icon(Icons.refresh,size: 15.w,color: Colors.white,),
+                      text: "Reload",style: GoogleFonts.rubik(color: Colors.white)),),
+                SizedBox(width: 10.w,)
+              ],),),
+            SizedBox(height: 10.h,),
+            Column(mainAxisSize: MainAxisSize.min,
+              children: state.map((e){
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 3.h),
+                  child: openChallengeTile(e),
+                );
+              }).toList(),)
+          ],);
+      },
+    );
   }
   
-  Widget openChallengeTile(String e){
+  Widget openChallengeTile(Game game){
     return Container(height: 60.h,decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
         color: Colors.black45
     ),padding: EdgeInsets.all(10.w),
       child: Row(children: [
         SizedBox(width: 10.w,),
-        IconText(icon: Icon(Icons.currency_rupee,color:Color(0xff2AE716)), text: "50",style:
+        IconText(icon: Icon(Icons.currency_rupee,color:Color(0xff2AE716)),
+          text: game.winning.toString(),
+          style:
           GoogleFonts.rubik(color: Color(0xff2AE716)),),
         SizedBox(width: 10.w,),
         Column(crossAxisAlignment:CrossAxisAlignment.start,children: [
@@ -100,7 +119,7 @@ class _PlayState extends State<Play> {
             Center(child: Icon(Icons.person,size:15.sp,),),
             radius: 10.sp,),
             SizedBox(width: 3.w,),
-            Text("Ankit",style: GoogleFonts.rubik(
+            Text(game.hostName,style: GoogleFonts.rubik(
               fontWeight: FontWeight.w500,
               color: Colors.white
             ),)
@@ -108,7 +127,8 @@ class _PlayState extends State<Play> {
           SizedBox(height: 4.h,),
           Row(mainAxisAlignment: MainAxisAlignment.start,children: [
             Text("Winning : ",style: GoogleFonts.rubik(color: Colors.white30,),),
-            IconText(icon: Icon(Icons.currency_rupee,color: Colors.orange,size: 9.sp,), text: "90",
+            IconText(icon: Icon(Icons.currency_rupee,color: Colors.orange,size: 9.sp,),
+              text: game.winning.toString(),
               style: GoogleFonts.rubik(fontSize: 10.sp,color: Colors.orange),)
           ],)
         ],),
@@ -120,43 +140,48 @@ class _PlayState extends State<Play> {
       ],),);
   }
 
-  Widget liveChallenges(){
-    return Column(mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(height: 46.h,decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10.r),
-            color: Colors.white10
-        ),padding: EdgeInsets.all(10.w),
-          child: Row(children: [
-            SizedBox(width: 10.w,),
-            const Icon(Icons.arrow_forward_rounded,color: Colors.blue,),
-            SizedBox(width: 3.w,),
-            Text("Live challenges",style: GoogleFonts.rubik(
-                color: Colors.blue
-            ),),
-          ],),),
-        SizedBox(height: 10.h,),
-        Column(mainAxisSize: MainAxisSize.min,
-          children: dummy.map((e){
-            return Padding(
-              padding: EdgeInsets.only(bottom: 3.h),
-              child: liveChallengeTile(e),
-            );
-          }).toList(),)
-      ],);
+  Widget liveGames(){
+    return BlocBuilder<LiveGamesBloc,List<LiveGame>>(
+      builder: (context,state){
+        return Column(mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(height: 46.h,decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.r),
+                color: Colors.white10
+            ),padding: EdgeInsets.all(10.w),
+              child: Row(children: [
+                SizedBox(width: 10.w,),
+                const Icon(Icons.arrow_forward_rounded,color: Colors.blue,),
+                SizedBox(width: 3.w,),
+                Text("Live challenges",style: GoogleFonts.rubik(
+                    color: Colors.blue
+                ),),
+              ],),),
+            SizedBox(height: 10.h,),
+            Column(mainAxisSize: MainAxisSize.min,
+              children: state.map((e){
+                return Padding(
+                  padding: EdgeInsets.only(bottom: 3.h),
+                  child: liveChallengeTile(e),
+                );
+              }).toList(),)
+          ],);
+      }
+    );
   }
 
-  Widget liveChallengeTile(String e){
+  Widget liveChallengeTile(LiveGame game){
     return Container(height: 30.h,decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.r),
         color: Colors.black45
     ),padding: EdgeInsets.all(10.w),
       child: Row(children: [
         SizedBox(width: 10.w,),
-        IconText(icon: Icon(Icons.currency_rupee,color:Colors.blue), text: "50",style:
+        IconText(icon: Icon(Icons.currency_rupee,color:Colors.blue), text: game.amount.toString(),
+          style:
         GoogleFonts.rubik(color: Colors.blue),),
         SizedBox(width: 10.w,),
-        Text("Rahul VS Ankit",style: GoogleFonts.rubik(
+        Text("${game.player1} VS ${game.player2}",style: GoogleFonts.rubik(
           fontWeight: FontWeight.bold,
           color: Colors.white70
         ),)
