@@ -17,6 +17,7 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  late LoginBlocState previous;
   TextEditingController phoneController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   TextEditingController nameController = TextEditingController();
@@ -56,14 +57,14 @@ class _LoginState extends State<Login> {
   Widget infoBoxContent(){
     return BlocConsumer<LoginBloc,LoginBlocState>(
       listener: (context,state){
+        if(state.enumState==LoginState.finish){
+          Navigator.pushReplacementNamed(context, "/dashboard");
+          return;
+        }
         errorDialog((state as ErrorState).text,context);
       },
       listenWhen: (prev,curr){
-        if(curr.enumState==LoginState.errorState){
-          _bloc.add(ResetState(prev));
-          return true;
-        }
-        return false;
+        return curr.enumState==LoginState.errorState || curr.enumState==LoginState.finish;
       },
       builder: (context,state){
         _bloc = context.read<LoginBloc>();
@@ -108,7 +109,8 @@ class _LoginState extends State<Login> {
         TextField(keyboardType: TextInputType.phone,
           controller: phoneController,
         maxLength: 10,
-        decoration: InputDecoration(border: OutlineInputBorder(
+        decoration: InputDecoration(counterText: "",
+            border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
           borderSide: BorderSide(color: Colors.black12,width: 1.w)
         ),hintText: "Enter Mobile Number",focusedBorder: OutlineInputBorder(
@@ -216,7 +218,7 @@ class _LoginState extends State<Login> {
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
         SizedBox(height: 10.h,),
-        TextField(controller: nameController,
+        TextField(keyboardType: TextInputType.text,controller: nameController,
           decoration: InputDecoration(border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)
@@ -228,8 +230,8 @@ class _LoginState extends State<Login> {
         TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
           backgroundColor: WidgetStateProperty.all(Colors.orange),
         ),onPressed: (){
-          if(phoneController.text.trim().isEmpty) return;
-          _bloc.add(OtpRequestedEvent(phoneController.text,_bloc));
+          if(nameController.text.trim().isEmpty) return;
+          _bloc.add(NameUploadEvent(nameController.text.trim()));
         }, child:
         Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [

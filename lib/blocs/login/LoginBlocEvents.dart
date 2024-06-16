@@ -19,7 +19,10 @@ class OtpVerificationEvent extends LoginBlocEvent{
   OtpVerificationEvent(this.otp);
 }
 
-class NameUploadEvent extends LoginBlocEvent{}
+class NameUploadEvent extends LoginBlocEvent{
+  final String name;
+  NameUploadEvent(this.name);
+}
 
 class OTPSentEvent extends LoginBlocEvent{
   final String _id;

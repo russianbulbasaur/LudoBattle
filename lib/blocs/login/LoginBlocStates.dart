@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:ludo_macha/Screens/login.dart';
 
 abstract class LoginBlocState extends Equatable{
   final LoginState enumState;
@@ -7,7 +8,7 @@ abstract class LoginBlocState extends Equatable{
 }
 
 enum LoginState{
-  phone,sendingOTP,otp,verifyingOTP,name,uploadingName,errorState
+  phone,sendingOTP,otp,verifyingOTP,name,uploadingName,errorState,finish
 }
 
 class PhoneNumberState extends LoginBlocState{
@@ -51,6 +52,12 @@ class NameState extends LoginBlocState{
 
 class UploadingNameState extends LoginBlocState{
   const UploadingNameState(super.enumState,super.showLoader);
+  @override
+  List<Object?> get props => [enumState];
+}
+
+class Finish extends LoginBlocState{
+  const Finish(super.enumState,super.showLoader);
   @override
   List<Object?> get props => [enumState];
 }

@@ -37,17 +37,30 @@ class _ViewGameState extends State<ViewGame> {
             BlocProvider(create: (context) => ResultButtonsBloc()),
             BlocProvider(create: (context) => ScreenshotBloc())
           ],
-          child: Column(children: [
-            gameStats(),
-            SizedBox(height: 15.h,),
-            (widget.game.type==GameType.host)?codeAreaHost():codeAreaPlayer(),
-            SizedBox(height: 15.h,),
-            resultPanel(),
-            howToPlayPanel()
-          ],),
+          child: initialState(),
         ),
       ),
     ),));
+  }
+
+  Widget initialState(){
+    if(widget.game.type==GameType.host){
+      return Column(children: [
+        gameStats(),
+        SizedBox(height: 15.h,),
+        codeAreaHost(),
+        SizedBox(height: 15.h,),
+        howToPlayPanel()
+      ],);
+    }else{
+      return Column(children: [
+        gameStats(),
+        SizedBox(height: 15.h,),
+        codeAreaPlayer(),
+        SizedBox(height: 15.h,),
+        resultPanel(),
+      ],);
+    }
   }
 
   Widget gameStats(){
@@ -287,7 +300,8 @@ class _ViewGameState extends State<ViewGame> {
                textAlign: TextAlign.center,
                style:GoogleFonts.rubik(fontWeight: FontWeight.w200,color: Colors.white38),),
              SizedBox(height: 10.h,),
-             (state==null)?Container():Image.file(File(state.path)),
+             (state==null)?Container():SizedBox(height: 200.h,
+                 child: Image.file(File(state.path))),
              TextButton(style: ButtonStyle(minimumSize:
              WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
                  backgroundColor: WidgetStateProperty.all(Colors.grey),

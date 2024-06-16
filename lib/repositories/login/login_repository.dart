@@ -25,10 +25,16 @@ class LoginRepository {
     }
 
   authenticate(String otp,String id) async{
-    _bloc = context.read<LoginBloc>();
+    _bloc.add(OTPVerifiedEvent());
+    return;
     PhoneAuthCredential creds = PhoneAuthProvider.credential(verificationId: id, smsCode: otp);
     auth.signInWithCredential(creds).then((value){
-      _bloc.add(OTPVerifiedEvent());
+
     });
+  }
+
+  uploadName(String name){
+    _bloc.add(NameUploadedEvent());
+    return true;
   }
 }
