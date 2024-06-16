@@ -37,43 +37,65 @@ class _ViewGameState extends State<ViewGame> {
     border: Border.all(color: Colors.white10,width: 1.w)),
     child: Column(mainAxisSize: MainAxisSize.min,children: [
       Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(10.0),
         child: Row(children: [
-          Text("Players : "),
-          Text("${widget.game.player2} VS ${widget.game.player1}")
+          Text("Players : ",style:
+            GoogleFonts.rubik(color: Colors.white38,fontWeight: FontWeight.w500),),
+          Text("${widget.game.player2} VS ${widget.game.player1}",style:
+            GoogleFonts.rubik(color: Colors.white,fontWeight: FontWeight.bold),)
         ],),
       ),
       Divider(thickness: 1.h,color: Colors.white10,),
       Padding(
-        padding: EdgeInsets.only(left: 40.w,right: 120.w,top: 10.h),
+        padding: EdgeInsets.only(left: 40.w,right: 70.w,top: 10.h),
         child: SizedBox(height: MediaQuery.of(context).size.height/7,
           child: Column(children: [
             Row(children: [
-              Column(mainAxisAlignment: MainAxisAlignment.start,mainAxisSize: MainAxisSize.min,children: [
-                Text("Game ID"),
+              Column(mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,children: [
+                Text("Game ID",style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                color: Colors.white,fontSize: 12.h),),
                 SizedBox(height: 3.h,),
-                Text("#55555")
+                Text("#55555",style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                    color: Colors.blue,fontSize: 12.h),textAlign: TextAlign.left,)
               ],),
-              Spacer(),
-              Column(mainAxisAlignment: MainAxisAlignment.start,mainAxisSize: MainAxisSize.min,children: [
-                Text("Game ID"),
+              const Spacer(),
+              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,children: [
+                Text("Game Date",style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                    color: Colors.white,fontSize: 12.h),),
                 SizedBox(height: 3.h,),
-                Text("#55555")
+                Text("13-05 05:00 PM",style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                    color: Colors.blue,fontSize: 12.h),)
               ],)
             ],),
             SizedBox(height: 20.h,),
             Row(children: [
-              Column(mainAxisAlignment: MainAxisAlignment.start,mainAxisSize: MainAxisSize.min,children: [
-                Text("Game ID"),
-                SizedBox(height: 3.h,),
-                Text("#55555")
-              ],),
-              Spacer(),
-              Column(mainAxisAlignment: MainAxisAlignment.start,mainAxisSize: MainAxisSize.min,children: [
-                Text("Game ID"),
-                SizedBox(height: 3.h,),
-                Text("#55555")
-              ],)
+              Column(mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,children: [
+                  Text("Amount",style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                      color: Colors.white,fontSize: 12.h),),
+                  SizedBox(height: 3.h,),
+                  TextIcon(text: "40", icon: Icon(Icons.currency_rupee,size: 13.h,
+                    color: Colors.green,),
+                  style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                      color: Colors.green,fontSize: 12.h),)
+                ],),
+              const Spacer(),
+              Column(crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,children: [
+                  Text("Winning Amount",style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                      color: Colors.white,fontSize: 12.h),),
+                  SizedBox(height: 3.h,),
+                  TextIcon(text: "40", icon: Icon(Icons.currency_rupee,size: 13.h,
+                    color: Colors.green,),
+                    style: GoogleFonts.rubik(fontWeight: FontWeight.w500,
+                        color: Colors.green,fontSize: 12.h),)
+                ],),
             ],)
           ],)
         ),
@@ -83,14 +105,25 @@ class _ViewGameState extends State<ViewGame> {
 
   Widget codeAreaPlayer(){
     return Container(
+      padding: EdgeInsets.all(10.h),
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.r),
           border: Border.all(color: Colors.white10,width: 1.w)),
       child: Column(mainAxisSize: MainAxisSize.min,children: [
-        Row(children: [Text("You are "),Text("Player")],mainAxisAlignment: MainAxisAlignment.center,),
-        Text(textAlign: TextAlign.center,
-            "Join the room code shared here. The code will be copied to your clipboard after you click on the button below"),
+        Row(mainAxisAlignment: MainAxisAlignment.center,children:
+        [Text("You are a ",style: GoogleFonts.rubik(
+            fontWeight: FontWeight.w500,
+            fontSize: 20.sp),),Text("Player",style: GoogleFonts.rubik(
+            color: Colors.green,
+            fontWeight: FontWeight.bold,
+            fontSize: 20.sp),)],),
         SizedBox(height: 10.h,),
-        Text("CSDFSDFSDCDC"),
+        Text(textAlign: TextAlign.center,
+            "Join the room code shared here. The code will be copied to your clipboard after you click on the button below",
+        style: GoogleFonts.rubik(fontWeight: FontWeight.w200,color: Colors.white38),),
+        SizedBox(height: 15.h,),
+        Text("CSDFSDFSDCDC",style: GoogleFonts.rubik(
+            fontWeight: FontWeight.bold,
+            fontSize: 20.sp),),
         SizedBox(height: 10.h,),
         TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
           backgroundColor: WidgetStateProperty.all(Colors.orange),
@@ -124,9 +157,16 @@ class _ViewGameState extends State<ViewGame> {
       decoration: BoxDecoration(borderRadius: BorderRadius.circular(10.r),
           border: Border.all(color: Colors.white10,width: 1.w)),
       child: Column(mainAxisSize: MainAxisSize.min,children: [
-        Row(children: [Text("You are "),Text("Host")],mainAxisAlignment: MainAxisAlignment.center,),
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [const Text("You are "),Text("Host",style:
+          GoogleFonts.rubik(color: Colors.green,
+          fontWeight: FontWeight.w500,
+          fontSize: 15.sp),)],),
         Text("Open Ludo King App to create the Room and share the 8 digit room code here",
-        textAlign: TextAlign.center,),
+        textAlign: TextAlign.center,
+        style: GoogleFonts.rubik(
+            fontWeight: FontWeight.w300,
+            fontSize: 10.sp),),
         SizedBox(height: 10.h,),
         TextField(controller: codeController,
           decoration: InputDecoration(border: OutlineInputBorder(
@@ -180,4 +220,11 @@ class _ViewGameState extends State<ViewGame> {
               fontWeight: FontWeight.w500,)),))
       ],),);
   }
+
+
+  Widget resultPanel(){
+    return Container();
+  }
+
+
 }
