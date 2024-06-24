@@ -1,38 +1,27 @@
-import 'package:ludo_macha/blocs/login/LoginBlocStates.dart';
-
-import 'LoginBloc.dart';
 
 abstract class LoginBlocEvent{}
-class OtpRequestedEvent extends LoginBlocEvent{
-  String phone;
-  LoginBloc bloc;
-  OtpRequestedEvent(this.phone,this.bloc);
+
+class SwitchToOTPEvent extends LoginBlocEvent{
+  final String phone;
+  SwitchToOTPEvent(this.phone);
 }
 
-class ResetState extends LoginBlocEvent{
-  LoginBlocState prev;
-  ResetState(this.prev);
+class SwitchToNameEvent extends LoginBlocEvent{
+  final String phone,otp,id;
+  SwitchToNameEvent(this.phone,this.otp,this.id);
 }
 
-class OtpVerificationEvent extends LoginBlocEvent{
-  String otp;
-  OtpVerificationEvent(this.otp);
+
+class ErrorEvent extends LoginBlocEvent{
+  final String message;
+  ErrorEvent(this.message);
 }
 
-class NameUploadEvent extends LoginBlocEvent{
-  final String name;
-  NameUploadEvent(this.name);
+class SignupEvent extends LoginBlocEvent{
+  final String phone,otp,id,name;
+  SignupEvent(this.phone,this.otp,this.id,this.name);
 }
 
-class OTPSentEvent extends LoginBlocEvent{
-  final String _id;
-  OTPSentEvent(this._id);
-}
-
-class OTPVerifiedEvent extends LoginBlocEvent{}
-
-class NameUploadedEvent extends LoginBlocEvent{}
-
-class OTPVerificationFailedEvent extends LoginBlocEvent{}
+class SwitchToFinishEvent extends LoginBlocEvent{}
 
 

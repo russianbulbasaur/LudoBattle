@@ -264,7 +264,7 @@ class _ViewGameState extends State<ViewGame> {
                   fontWeight: FontWeight.w500,
                   fontSize: 16.sp
               )),
-              Spacer(),
+              const Spacer(),
               TextButton(onPressed: (){},style:
               ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white10),
                 minimumSize: WidgetStateProperty.all(Size(140.w,0)),

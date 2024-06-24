@@ -21,6 +21,7 @@ class _LoginState extends State<Login> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController otpController = TextEditingController();
   TextEditingController nameController = TextEditingController();
+  ValueNotifier<bool> showLoader = ValueNotifier(false);
   late LoginBloc _bloc;
   @override
   Widget build(BuildContext context) {
@@ -42,7 +43,7 @@ class _LoginState extends State<Login> {
 
   Widget infoBox(){
     return RepositoryProvider(
-      create: (context) => LoginRepository(context),
+      create: (context) => LoginRepository(),
       child: BlocProvider(
         create: (context) => LoginBloc(context.read<LoginRepository>()),
         child: SizedBox(width: MediaQuery.of(context).size.width,
@@ -57,38 +58,38 @@ class _LoginState extends State<Login> {
   Widget infoBoxContent(){
     return BlocConsumer<LoginBloc,LoginBlocState>(
       listener: (context,state){
-        if(state.enumState==LoginState.finish){
+        if(state.state==LoginStates.finish){
           Navigator.pushReplacementNamed(context, "/dashboard");
           return;
         }
-        errorDialog((state as ErrorState).text,context);
+        showLoader.value = false;
+        errorDialog((state as ErrorState).message, context);
       },
       listenWhen: (prev,curr){
-        return curr.enumState==LoginState.errorState || curr.enumState==LoginState.finish;
+        return curr.state==LoginStates.error || curr.state==LoginStates.finish;
       },
       builder: (context,state){
         _bloc = context.read<LoginBloc>();
-        switch(state.enumState){
-          case LoginState.sendingOTP:
-          case LoginState.phone:
-            return phoneNumberContent(state.showLoader);
-          case LoginState.verifyingOTP:  
-          case LoginState.otp:
-            return otpContent(state.showLoader,"");
-          case LoginState.uploadingName:  
-          case LoginState.name:
-            return nameContent(state.showLoader);
+        switch(state.state){
+          case LoginStates.phone:
+            return phoneNumberContent();
+          case LoginStates.otp:
+            OTPState s = state as OTPState;
+            return otpContent(s.phone,s.id);
+          case LoginStates.name:
+            NameState s = state as NameState;
+            return nameContent(s.phone,s.otp,s.id);
           default:
             return Container();
         }
       },
       buildWhen: (prev,curr){
-        return curr.enumState!=LoginState.errorState;
-        },
+        return curr.state!=LoginStates.error && curr.state!=LoginStates.finish;
+      },
     );
   }
   
-  Widget phoneNumberContent(bool showLoader){
+  Widget phoneNumberContent(){
     return Container(decoration: const BoxDecoration(color: Colors.black26),
       padding: EdgeInsets.all(10.w),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
@@ -121,11 +122,13 @@ class _LoginState extends State<Login> {
         TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
           backgroundColor: WidgetStateProperty.all(Colors.blue),
         ),onPressed: (){
-          if(phoneController.text.trim().length<10){
+          String phone = phoneController.text.trim();
+          if(phone.length<10){
             errorDialog("Invalid phone number",context);
             return;
           }
-          _bloc.add(OtpRequestedEvent(phoneController.text,_bloc));
+          showLoader.value = true;
+          _bloc.add(SwitchToOTPEvent(phone));
         }, child:
         Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -138,16 +141,14 @@ class _LoginState extends State<Login> {
                 fontStyle: FontStyle.normal,
                 fontWeight: FontWeight.w500,)),),
             SizedBox(width: 10.w,),
-            Visibility(visible: showLoader,child: SizedBox(width: 10.w,
-            height: 10.h
-            ,child: const CircularProgressIndicator(color: Colors.white,)))
+            loader()
         ],))
       ],),
     );
   }
 
 
-  Widget otpContent(bool showLoader,number){
+  Widget otpContent(String number,String id){
     return Container(decoration: const BoxDecoration(color: Colors.black26),
       padding: EdgeInsets.all(10.w),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
@@ -178,8 +179,11 @@ class _LoginState extends State<Login> {
           backgroundColor: WidgetStateProperty.all(Colors.green),
         ),onPressed: (){
           String otp = otpController.text;
-          if(otp.trim().length<6) return;
-          _bloc.add(OtpVerificationEvent(otp));
+          if(otp.trim().length<6) {
+            errorDialog("Otp not valid", context);
+            return;
+          }
+          _bloc.add(SwitchToNameEvent(number, otp,id));
         }, child:
         Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -192,15 +196,13 @@ class _LoginState extends State<Login> {
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w500,)),),
             SizedBox(width: 10.w,),
-            Visibility(visible: showLoader,child: SizedBox(width: 10.w,
-                height: 10.h
-                ,child: const CircularProgressIndicator(color: Colors.white,)))
+            loader()
           ],))
       ],),
     );
   }
   
-  Widget nameContent(bool showLoader){
+  Widget nameContent(String phone,String otp,String id){
     return Container(decoration: const BoxDecoration(color: Colors.black26),
       padding: EdgeInsets.all(10.w),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start,children: [
@@ -230,8 +232,12 @@ class _LoginState extends State<Login> {
         TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
           backgroundColor: WidgetStateProperty.all(Colors.orange),
         ),onPressed: (){
-          if(nameController.text.trim().isEmpty) return;
-          _bloc.add(NameUploadEvent(nameController.text.trim()));
+          String name = nameController.text.trim();
+          if(name.isEmpty){
+            errorDialog("Valid name required", context);
+            return;
+          }
+          _bloc.add(SignupEvent(phone,otp,id,name));
         }, child:
         Row(mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -244,11 +250,20 @@ class _LoginState extends State<Login> {
                   fontStyle: FontStyle.normal,
                   fontWeight: FontWeight.w500,)),),
             SizedBox(width: 10.w,),
-            Visibility(visible: showLoader,child: SizedBox(width: 10.w,
-                height: 10.h
-                ,child: const CircularProgressIndicator(color: Colors.white,)))
+            loader()
           ],))
       ],),
+    );
+  }
+
+
+  Widget loader(){
+    return ValueListenableBuilder(
+      builder: (BuildContext context,bool val,idk){
+        return Visibility(visible: val,child: SizedBox(width: 10.w,
+        height: 10.h
+        ,child: const CircularProgressIndicator(color: Colors.white,)));
+      }, valueListenable: showLoader,
     );
   }
 

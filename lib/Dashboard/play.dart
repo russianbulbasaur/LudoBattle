@@ -11,7 +11,6 @@ import 'package:ludo_macha/common/CustomAppBar.dart';
 import 'package:ludo_macha/common/IconAndText.dart';
 
 import '../blocs/play/LiveGamesBloc.dart';
-import '../common/ErrorDialog.dart';
 
 class Play extends StatefulWidget {
   const Play({super.key});
@@ -53,7 +52,7 @@ class _PlayState extends State<Play> {
 
   Widget ludoLottie(){
     return SizedBox(height: 80.h,
-      child: StreamBuilder(stream: Future.delayed(Duration(seconds: 1),() {
+      child: StreamBuilder(stream: Future.delayed(const Duration(seconds: 1),() {
         return 0;
       },).asStream(),
         builder: (context,snap){
@@ -109,16 +108,16 @@ class _PlayState extends State<Play> {
     ),padding: EdgeInsets.all(10.w),
       child: Row(children: [
         SizedBox(width: 10.w,),
-        IconText(icon: Icon(Icons.currency_rupee,color:Color(0xff2AE716)),
+        IconText(icon: const Icon(Icons.currency_rupee,color:Color(0xff2AE716)),
           text: game.winning.toString(),
           style:
-          GoogleFonts.rubik(color: Color(0xff2AE716)),),
+          GoogleFonts.rubik(color: const Color(0xff2AE716)),),
         SizedBox(width: 10.w,),
         Column(crossAxisAlignment:CrossAxisAlignment.start,children: [
           Row(mainAxisAlignment: MainAxisAlignment.start,children: [
-            CircleAvatar(backgroundColor: Colors.blue,child:
-            Center(child: Icon(Icons.person,size:15.sp,),),
-            radius: 10.sp,),
+            CircleAvatar(backgroundColor: Colors.blue,
+            radius: 10.sp,child:
+            Center(child: Icon(Icons.person,size:15.sp,),),),
             SizedBox(width: 3.w,),
             Text(game.hostName,style: GoogleFonts.rubik(
               fontWeight: FontWeight.w500,
@@ -133,7 +132,7 @@ class _PlayState extends State<Play> {
               style: GoogleFonts.rubik(fontSize: 10.sp,color: Colors.orange),)
           ],)
         ],),
-        Spacer(),
+        const Spacer(),
       TextButton(onPressed: (){
         Navigator.push(context, MaterialPageRoute(builder: (context){
           return ViewGame(game: game);
@@ -182,7 +181,7 @@ class _PlayState extends State<Play> {
     ),padding: EdgeInsets.all(10.w),
       child: Row(children: [
         SizedBox(width: 10.w,),
-        IconText(icon: Icon(Icons.currency_rupee,color:Colors.blue), text: game.amount.toString(),
+        IconText(icon: const Icon(Icons.currency_rupee,color:Colors.blue), text: game.amount.toString(),
           style:
         GoogleFonts.rubik(color: Colors.blue),),
         SizedBox(width: 10.w,),

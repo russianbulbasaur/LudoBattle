@@ -1,40 +1,63 @@
+import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ludo_macha/blocs/login/LoginBloc.dart';
+import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../blocs/login/LoginBlocEvents.dart';
 
 class LoginRepository {
   late LoginBloc _bloc;
   FirebaseAuth auth = FirebaseAuth.instance;
-  final BuildContext context;
-  LoginRepository(this.context);
-  sendOTP(String number,LoginBloc bloc) async{
-    _bloc = bloc;
-    await auth.verifyPhoneNumber(phoneNumber:"+91$number",verificationCompleted: (creds){
-      _bloc.add(OTPVerifiedEvent());
-    }, verificationFailed: (execption){
-      print(execption);
-      _bloc.add(OTPVerificationFailedEvent());
-    }, codeSent: (id,resendId){
-      _bloc.add(OTPSentEvent(id));
-    }, codeAutoRetrievalTimeout: (time){
-
-    });
-    }
-
-  authenticate(String otp,String id) async{
-    _bloc.add(OTPVerifiedEvent());
-    return;
-    PhoneAuthCredential creds = PhoneAuthProvider.credential(verificationId: id, smsCode: otp);
-    auth.signInWithCredential(creds).then((value){
-
-    });
+  LoginRepository();
+  sendOTP(String number,Function errorCallback) async{
+    ConfirmationResult res;
+    await auth.verifyPhoneNumber(phoneNumber:"+91$number",verificationCompleted: (creds){}, verificationFailed: (execption){
+      errorCallback(execption);
+    },
+        codeSent: (id,resendId){
+      LoginBloc.firebaseId = id;
+    }, codeAutoRetrievalTimeout: (time){});
   }
 
-  uploadName(String name){
-    _bloc.add(NameUploadedEvent());
-    return true;
+
+  Future<bool?> verify(String phone,String id,String otp,Function errorCallback) async{
+    try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? url = prefs.getString("url");
+      if(url==null) throw "Url is null";
+      Response response = await get(Uri.parse("$url/auth/verify?id=$id&phone=$phone&otp=$otp"));
+      if(response.statusCode!=200) throw response;
+      Map<String,dynamic> decodedResult = jsonDecode(response.body.toString());
+      if(decodedResult.containsKey("token")){
+        await prefs.setString("user", decodedResult.toString());
+        return true;
+      }
+      return false;
+    }catch(e){
+      errorCallback(e.toString());
+      print(e);
+      return null;
+    }
+  }
+
+  signup(String phone,String otp,String id,String name,Function errorCallback) async{
+    try{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? url = prefs.getString("url");
+      if(url==null) throw "Url is null";
+      Response response = await post(Uri.parse("$url/auth/signup"),
+      body: {'phone':phone,'otp':otp,'id':id,'name':name});
+      if(response.statusCode!=200) throw response;
+      Map<String,dynamic> decodedResult = jsonDecode(response.body);
+      if(decodedResult.containsKey("token")){
+        await prefs.setString("user", decodedResult.toString());
+        return true;
+      }
+      return false;
+    }catch(e){
+      errorCallback(e);
+      print(e);
+      return null;
+    }
   }
 }

@@ -1,63 +1,48 @@
 import 'package:equatable/equatable.dart';
-import 'package:ludo_macha/Screens/login.dart';
 
 abstract class LoginBlocState extends Equatable{
-  final LoginState enumState;
-  final bool showLoader;
-  const LoginBlocState(this.enumState,this.showLoader);
+  final LoginStates state;
+  const LoginBlocState(this.state);
+}
+enum LoginStates{
+  phone,otp,name,error,finish
 }
 
-enum LoginState{
-  phone,sendingOTP,otp,verifyingOTP,name,uploadingName,errorState,finish
-}
 
-class PhoneNumberState extends LoginBlocState{
-  const PhoneNumberState(super.enumState,super.showLoader);
+class PhoneState extends LoginBlocState{
+  const PhoneState(super.state);
   @override
-  List<Object?> get props => [enumState];
-}
-
-class SendingOTPState extends LoginBlocState{
-  const SendingOTPState(super.enumState,super.showLoader);
-  @override
-  List<Object?> get props => [enumState];
+  List<Object?> get props => [super.state];
 }
 
 class OTPState extends LoginBlocState{
-  const OTPState(super.enumState,super.showLoader);
+  final String phone;
+  final String id;
+  const OTPState(super.state,this.phone,this.id);
   @override
-  List<Object?> get props => [enumState];
-}
+  List<Object?> get props => [super.state];
 
-class ErrorState extends LoginBlocState{
-  final String text;
-  const ErrorState(super.enumState,super.showLoader,this.text);
-
-  @override
-  // TODO: implement props
-  List<Object?> get props => [enumState];
-}
-
-class VerifyingOTPState extends LoginBlocState{
-  const VerifyingOTPState(super.enumState,super.showLoader);
-  @override
-  List<Object?> get props => [enumState];
 }
 
 class NameState extends LoginBlocState{
-  const NameState(super.enumState,super.showLoader);
+  final String phone,otp,id;
+  const NameState(super.state,this.phone,this.otp,this.id);
   @override
-  List<Object?> get props => [enumState];
+  List<Object?> get props => [super.state];
 }
 
-class UploadingNameState extends LoginBlocState{
-  const UploadingNameState(super.enumState,super.showLoader);
+
+class ErrorState extends LoginBlocState{
+  final String message;
+  const ErrorState(super.state,this.message);
   @override
-  List<Object?> get props => [enumState];
+  List<Object?> get props => [super.state];
 }
 
-class Finish extends LoginBlocState{
-  const Finish(super.enumState,super.showLoader);
+class FinishState extends LoginBlocState{
+  const FinishState(super.state);
   @override
-  List<Object?> get props => [enumState];
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+
 }
