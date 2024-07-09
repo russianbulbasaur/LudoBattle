@@ -10,15 +10,21 @@ class User{
 
   User.fromJson(String json){
     Map decoded = jsonDecode(json);
-    name = decoded["name"];
-    balance = decoded["balance"];
-    phone = decoded["phone"];
-    token = decoded["token"];
-    id = decoded["id"];
+    name = decoded["name"].toString();
+    balance = double.parse(decoded["balance"].toString());
+    phone = decoded["phone"].toString();
+    token = decoded["token"].toString();
+    id = BigInt.parse(decoded["id"].toString());
   }
 
   String toJson(){
-    return jsonEncode(this);
+    Map<String,dynamic> toBeEncoded = {};
+    toBeEncoded["name"] = name;
+    toBeEncoded["balance"] = balance;
+    toBeEncoded["phone"] = phone;
+    toBeEncoded["token"] = token;
+    toBeEncoded["id"] = id.toString();
+    return jsonEncode(toBeEncoded);
   }
 
 }

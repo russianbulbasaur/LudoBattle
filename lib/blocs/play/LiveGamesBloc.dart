@@ -8,7 +8,7 @@ class LiveGamesBloc extends Cubit<List<LiveGame>>{
   void challengeScapper() async{
     PlayRepository repository = PlayRepository();
     while(true){
-      emit(repository.liveGameScapper());
+      emit(repository.liveGameScrapper());
     }
   }
 }

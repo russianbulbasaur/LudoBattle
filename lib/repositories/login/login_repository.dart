@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:ludo_macha/Models/User.dart' as UserModel;
 import 'package:ludo_macha/blocs/login/LoginBloc.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 
 class LoginRepository {
   late LoginBloc _bloc;
@@ -29,7 +29,8 @@ class LoginRepository {
       if(response.statusCode!=200) throw response;
       Map<String,dynamic> decodedResult = jsonDecode(response.body.toString());
       if(decodedResult.containsKey("token")){
-        await prefs.setString("user", decodedResult.toString());
+        UserModel.User user = UserModel.User.fromJson(response.body.toString());
+        await prefs.setString("user", user.toJson().toString());
         return true;
       }
       return false;
@@ -50,7 +51,8 @@ class LoginRepository {
       if(response.statusCode!=200) throw response;
       Map<String,dynamic> decodedResult = jsonDecode(response.body);
       if(decodedResult.containsKey("token")){
-        await prefs.setString("user", decodedResult.toString());
+        UserModel.User user = UserModel.User.fromJson(response.body.toString());
+        await prefs.setString("user", user.toJson().toString());
         return true;
       }
       return false;

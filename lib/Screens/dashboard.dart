@@ -7,6 +7,8 @@ import 'package:ludo_macha/Dashboard/home.dart';
 import 'package:ludo_macha/Dashboard/referrals.dart';
 import 'package:ludo_macha/Dashboard/support.dart';
 class Dashboard extends StatefulWidget {
+  static String name = "";
+  static double balance = 0;
   const Dashboard({super.key});
 
   @override
@@ -24,6 +26,7 @@ class DashboardState extends State<Dashboard> {
     });
     super.initState();
   }
+
 
   @override
   Widget build(BuildContext context) {

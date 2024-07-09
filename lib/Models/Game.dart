@@ -3,24 +3,34 @@ import 'dart:convert';
 import 'User.dart';
 
 class Game{
-  int id = 0;
+  BigInt id = BigInt.zero;
   GameType type = GameType.player;
   double winning = 0.0;
-  int hostId = 0;
+  BigInt hostId = BigInt.zero;
   String hostName = "";
   double cost = 0;
   String player1 = "";
   String player2 = "";
   DateTime gameDate = DateTime.now();
-
-  Game(this.id,this.type,this.winning,this.hostName);
+  String code = "";
 
   Game.fromJson(String json,User user){
-    Map decoded = jsonDecode(json);
-    id = decoded["id"];
-    winning = decoded["winning"];
-    hostId = decoded["hostID"];
+    Map<String,dynamic> decoded = jsonDecode(json);
+    id = BigInt.parse(decoded["id"].toString());
+    winning = double.parse(decoded["winning_amount"].toString());
+    hostId = BigInt.parse(decoded["hostID"].toString());
     if(hostId==user.id) type = GameType.host;
+    cost = double.parse(decoded["amount"].toString());
+    hostName = decoded["hostName"];
+  }
+
+  Game.fromMap(Map decoded,User user){
+    id = BigInt.parse(decoded["id"].toString());
+    winning = double.parse(decoded["winning_amount"].toString());
+    hostId = BigInt.parse(decoded["host_id"].toString());
+    if(hostId==user.id) type = GameType.host;
+    cost = double.parse(decoded["amount"].toString());
+    hostName = decoded["host_name"];
   }
 
   String toJson(){

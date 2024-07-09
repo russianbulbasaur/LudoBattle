@@ -1,9 +1,12 @@
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ludo_macha/Models/User.dart';
 import 'package:ludo_macha/Screens/dashboard.dart';
+import 'package:ludo_macha/blocs/dashboard/home/BalanceBloc.dart';
 import 'package:ludo_macha/common/IconAndText.dart';
 
 class Home extends StatefulWidget {
@@ -15,6 +18,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
+  final BalanceBloc _balanceBloc = BalanceBloc();
   List<String> titles = ["Referrals","Leaderboard","Change name","History","Support",
   "How to Play"];
   List<String> icons = ["images/icons/referral.svg","images/icons/leaderboard.svg",
@@ -22,6 +26,7 @@ class _HomeState extends State<Home> {
   "images/icons/play.svg"];
   @override
   void initState() {
+    _balanceBloc.loadBalance();
     super.initState();
   }
 
@@ -50,48 +55,56 @@ class _HomeState extends State<Home> {
   }
 
   Widget amountCard(){
-    return Card(color: Colors.white10,child:
-    SizedBox(height: MediaQuery.of(context).size.height/3.8,
-      child: Column(children: [
-        Expanded(flex: 2,child: Row(mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(width: 130.h,height: 130.h,padding: EdgeInsets.all(20.w),
-              child: Image.asset("images/icons/logo.png")),
-          SizedBox(width: 0.w,),
-            Column(mainAxisAlignment:MainAxisAlignment.center,
-              children: [
-              Text("Hey, Ankit",
-                  style: GoogleFonts.rubik(
-                      textStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18.sp,
-                        fontStyle: FontStyle.normal,
-                        fontWeight: FontWeight.w600,))),
-              Text('Your Wallet Balance is',
-                style: GoogleFonts.rubik(
-                    textStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 12.sp,
-                      fontStyle: FontStyle.normal,
-                      fontWeight: FontWeight.w500,)),)
-            ],),
-        ],),),
-        const Divider(),
-        Expanded(flex: 1,child: Row(mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-          //SvgPicture.asset("images/icons/balance.svg",height: 25.w,width: 25.w,),
-          SizedBox(width: 10.w,),
-          TextIcon(text: "100.0", icon: const Icon(Icons.currency_rupee),
-          style: GoogleFonts.rubik(
-              textStyle: TextStyle(
-                color: Colors.white,
-                fontSize: 16.sp,
-                fontStyle: FontStyle.normal,
-                fontWeight: FontWeight.w600,)),),
-          SizedBox(width: 3.w,),
-          const Icon(Icons.refresh)
-        ],),)
-      ],),),);
+    return BlocProvider(create: (context) => _balanceBloc,
+      child: BlocBuilder<BalanceBloc,User>(
+        builder: (context,state){
+          return Card(color: Colors.white10,child:
+          SizedBox(height: MediaQuery.of(context).size.height/3.8,
+            child: Column(children: [
+              Expanded(flex: 2,child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(width: 130.h,height: 130.h,padding: EdgeInsets.all(20.w),
+                      child: Image.asset("images/icons/logo.png")),
+                  SizedBox(width: 0.w,),
+                  Column(mainAxisAlignment:MainAxisAlignment.center,
+                    children: [
+                      Text("Hey, ${state.name}",
+                          style: GoogleFonts.rubik(
+                              textStyle: TextStyle(
+                                color: Colors.white,
+                                fontSize: 18.sp,
+                                fontStyle: FontStyle.normal,
+                                fontWeight: FontWeight.w600,))),
+                      Text('Your Wallet Balance is',
+                        style: GoogleFonts.rubik(
+                            textStyle: TextStyle(
+                              color: Colors.white,
+                              fontSize: 12.sp,
+                              fontStyle: FontStyle.normal,
+                              fontWeight: FontWeight.w500,)),)
+                    ],),
+                ],),),
+              const Divider(),
+              Expanded(flex: 1,child: Row(mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  //SvgPicture.asset("images/icons/balance.svg",height: 25.w,width: 25.w,),
+                  SizedBox(width: 10.w,),
+                  TextIcon(text: state.balance.toDouble().toString(), icon: const Icon(Icons.currency_rupee),
+                    style: GoogleFonts.rubik(
+                        textStyle: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16.sp,
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.w600,)),),
+                  SizedBox(width: 3.w,),
+                  GestureDetector(child: Icon(Icons.refresh),onTap: (){
+                    _balanceBloc.loadBalance();
+                  },)
+                ],),)
+            ],),),);
+        },
+      ),
+    );
   }
 
 

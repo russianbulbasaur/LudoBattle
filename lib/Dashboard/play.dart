@@ -23,6 +23,21 @@ class _PlayState extends State<Play> {
   List<String> dummy = ["","",""];
   TextEditingController amountController = TextEditingController();
 
+  final OpenChallengesBloc _openChallengesBloc = OpenChallengesBloc();
+  final LiveGamesBloc _liveGamesBloc = LiveGamesBloc();
+
+  @override
+  void initState() {
+    _openChallengesBloc.challengeScrapper();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _openChallengesBloc.openChallengeIsolate.kill();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(child:
@@ -33,8 +48,8 @@ class _PlayState extends State<Play> {
       child: Padding(
         padding: EdgeInsets.all(10.h),
         child: MultiBlocProvider(providers: [
-          BlocProvider(create: (context) => OpenChallengesBloc()),
-          BlocProvider(create: (context) => LiveGamesBloc())
+          BlocProvider(create: (context) => _openChallengesBloc),
+          BlocProvider(create: (context) => _liveGamesBloc)
         ],
           child: Column(children: [
             ludoLottie(),
@@ -82,7 +97,10 @@ class _PlayState extends State<Play> {
                     color: Colors.green
                 ),),
                 const Spacer(),
-                TextButton(onPressed: (){},style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white10),shape:
+                TextButton(onPressed: (){
+                  _openChallengesBloc.openChallengeIsolate.kill();
+                  _openChallengesBloc.challengeScrapper();
+                },style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white10),shape:
                 WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
                   child: IconText(icon:  Icon(Icons.refresh,size: 15.w,color: Colors.white,),
                       text: "Reload",style: GoogleFonts.rubik(color: Colors.white)),),
