@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:ludo_macha/blocs/login/LoginBloc.dart';
-import 'package:ludo_macha/blocs/login/LoginBlocEvents.dart';
-import 'package:ludo_macha/blocs/login/LoginBlocStates.dart';
+import 'package:ludo_macha/blocs/login/login_bloc.dart';
+import 'package:ludo_macha/blocs/login/login_bloc_events.dart';
+import 'package:ludo_macha/blocs/login/login_bloc_states.dart';
 import 'package:ludo_macha/repositories/login/login_repository.dart';
 
 import '../common/ErrorDialog.dart';
@@ -110,6 +110,7 @@ class _LoginState extends State<Login> {
         TextField(keyboardType: TextInputType.phone,
           controller: phoneController,
         maxLength: 10,
+        canRequestFocus: true,
         decoration: InputDecoration(counterText: "",
             border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.r),
@@ -167,6 +168,7 @@ class _LoginState extends State<Login> {
               fontWeight: FontWeight.w200,)),),
         SizedBox(height: 10.h,),
         TextField(maxLength: 6,controller: otpController,
+          canRequestFocus: true,
           decoration: InputDecoration(counterText: "",border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)
@@ -178,6 +180,7 @@ class _LoginState extends State<Login> {
         TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
           backgroundColor: WidgetStateProperty.all(Colors.green),
         ),onPressed: (){
+          FocusManager.instance.primaryFocus?.unfocus();
           String otp = otpController.text;
           if(otp.trim().length<6) {
             errorDialog("Otp not valid", context);
@@ -220,7 +223,8 @@ class _LoginState extends State<Login> {
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
         SizedBox(height: 10.h,),
-        TextField(keyboardType: TextInputType.text,controller: nameController,
+        TextField(controller: nameController,
+          canRequestFocus: true,
           decoration: InputDecoration(border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.r),
               borderSide: BorderSide(color: Colors.black12,width: 1.w)

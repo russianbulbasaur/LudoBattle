@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ludo_macha/blocs/payment/payment_events.dart';
+import 'package:ludo_macha/blocs/payment/payment_states.dart';
+import 'package:ludo_macha/blocs/payment/withdraw/WithdrawBloc.dart';
 
 import '../common/CustomAppBar.dart';
 import '../common/ErrorDialog.dart';
@@ -23,15 +27,18 @@ class _WithdrawState extends State<Withdraw> {
     },),body: SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(10.w),
-        child: Column(children: [
-          logo(),
-          amountBoxes(),
-          SizedBox(height: 10.h,),
-          amountAndUpi(),
-          SizedBox(height: 10.h,),
-          withdrawButton(),
-          SizedBox(height: 30.h,)
-        ],),
+        child: BlocProvider(
+          create: (context) => WithdrawBloc(InProgress(0)),
+          child: Column(children: [
+            logo(),
+            amountBoxes(),
+            SizedBox(height: 10.h,),
+            amountAndUpi(),
+            SizedBox(height: 10.h,),
+            withdrawButton(),
+            SizedBox(height: 30.h,)
+          ],),
+        ),
       ),
     ),));
   }
@@ -86,29 +93,39 @@ class _WithdrawState extends State<Withdraw> {
 
 
   Widget withdrawButton(){
-    return   TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
-      backgroundColor: WidgetStateProperty.all(Colors.pinkAccent),
-    ),onPressed: (){
-      if(amountController.text.trim().isEmpty){
-        errorDialog("Invalid amount",context);
-        return;
+    return  BlocConsumer<WithdrawBloc,PaymentState>(listener: (context,state){
+      errorDialog((state as Ended).message, context);
+    },
+      listenWhen: (prev,curr){return curr is Ended;},
+      builder: (context,state){
+         return TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
+        backgroundColor: WidgetStateProperty.all(Colors.pinkAccent),
+      ),onPressed: (){
+           int amount = 0;
+           try{
+             amount = int.parse(amountController.text.trim());
+             context.read<WithdrawBloc>().add(StartPayment(amount,upiId: upiController.text.trim()));
+           }catch(e){
+             errorDialog("Enter valid amount", context);
+           }
+      }, child:
+      Row(mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.monetization_on_rounded,color: Colors.white,),
+          SizedBox(width: 5.w),
+          Text("Withdraw",style: GoogleFonts.rubik(
+              textStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w500,)),),
+          SizedBox(width: 10.w,),
+          Visibility(visible: false,child: SizedBox(width: 10.w,
+              height: 10.h
+              ,child: const CircularProgressIndicator(color: Colors.white,)))
+        ],));
       }
-    }, child:
-    Row(mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.monetization_on_rounded,color: Colors.white,),
-        SizedBox(width: 5.w),
-        Text("Withdraw",style: GoogleFonts.rubik(
-            textStyle: TextStyle(
-              color: Colors.white,
-              fontSize: 14.sp,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w500,)),),
-        SizedBox(width: 10.w,),
-        Visibility(visible: false,child: SizedBox(width: 10.w,
-            height: 10.h
-            ,child: const CircularProgressIndicator(color: Colors.white,)))
-      ],));
+    );
   }
 
   Widget amountBoxes() {

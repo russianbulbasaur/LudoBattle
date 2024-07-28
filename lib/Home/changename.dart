@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ludo_macha/Screens/dashboard.dart';
+import 'package:ludo_macha/blocs/dashboard/change_name_bloc.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
+import 'package:ludo_macha/common/ErrorDialog.dart';
 
 import '../common/IconAndText.dart';
 class ChangeName extends StatefulWidget {
@@ -13,6 +17,7 @@ class ChangeName extends StatefulWidget {
 
 class _ChangeNameState extends State<ChangeName> {
   TextEditingController nameController = TextEditingController();
+  final ChangeNameBloc _changeNameBloc = ChangeNameBloc(Dashboard.name);
   @override
   Widget build(BuildContext context) {
     return SafeArea(child: Scaffold(appBar: CustomAppBar(onBackArrowTap: (){
@@ -50,16 +55,28 @@ class _ChangeNameState extends State<ChangeName> {
               fontStyle: FontStyle.normal,
               fontWeight: FontWeight.w200,)),),
         SizedBox(height: 10.h,),
-        TextField(keyboardType: TextInputType.phone,
-          controller: nameController,
-          maxLength: 10,
-          decoration: InputDecoration(counterText: "",border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: Colors.black12,width: 1.w)
-          ),hintText: "Ankit",focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.r),
-              borderSide: BorderSide(color: Colors.blue,width: 1.w)
-          )),),
+        BlocProvider(
+          create: (context)=>_changeNameBloc,
+          child: BlocConsumer<ChangeNameBloc,String>(
+          listener: (context,state){
+            Dashboard.name = state;
+            Navigator.pop(context);
+          },listenWhen: (prev,curr){
+            return prev!=curr;
+          }
+          ,builder: (context,state){
+            return TextField(
+              controller: nameController,
+              maxLength: 10,
+              decoration: InputDecoration(counterText: "",border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: Colors.black12,width: 1.w)
+              ),hintText: state,focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.r),
+                  borderSide: BorderSide(color: Colors.blue,width: 1.w)
+              )),);
+          }),
+        ),
         SizedBox(height: 10.h,),
       ],),
     );
@@ -68,7 +85,9 @@ class _ChangeNameState extends State<ChangeName> {
   Widget saveButton(){return  Padding(
     padding: EdgeInsets.only(left: 5.w,right: 5.w),
     child: TextButton(onPressed: (){
-
+      String newName = nameController.text.trim();
+      if(newName.isEmpty) errorDialog("Name cannot be empty", context);
+      _changeNameBloc.changeName(newName, Dashboard.name);
     },
         style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,47.h)),
             backgroundColor: WidgetStateProperty.all(Colors.transparent),

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:ludo_macha/blocs/payment/payment_events.dart';
+import 'package:ludo_macha/blocs/payment/payment_states.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
-
+import '../blocs/payment/deposit/deposit_bloc.dart';
 import '../common/ErrorDialog.dart';
 class Deposit extends StatefulWidget {
   const Deposit({super.key});
@@ -14,7 +18,8 @@ class Deposit extends StatefulWidget {
 class _DepositState extends State<Deposit> {
   TextEditingController amountController = TextEditingController();
   List<int> amounts = [100,200,300,500,1000,2000,3000,5000];
-  List<String> payments = ["","","",""];
+  List<String> payments = ["images/icons/razorpay.svg",
+    "images/icons/bhim.png","images/icons/phonepe.svg","images/icons/rupay.png"];
   @override
   Widget build(BuildContext context) {
     return SafeArea(child: Scaffold(appBar: CustomAppBar(title: "Deposit",onBackArrowTap: (){
@@ -22,18 +27,20 @@ class _DepositState extends State<Deposit> {
     },),body: SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(10.w),
-        child: Column(children: [
-          logo(),
-          SizedBox(height: 10.h,),
-          amountBox(),
-          SizedBox(height: 10.h,),
-          options(),
-          SizedBox(height: 10.h,),
-          depositButton(),
-          SizedBox(height: 10.h,),
-          gateways(),
-          SizedBox(height: 30.h,)
-        ],),
+        child: BlocProvider(create: (context) => DepositBloc(InProgress(0)),
+          child: Column(children: [
+            logo(),
+            SizedBox(height: 10.h,),
+            amountBox(),
+            SizedBox(height: 10.h,),
+            options(),
+            SizedBox(height: 10.h,),
+            depositButton(),
+            SizedBox(height: 10.h,),
+            gateways(),
+            SizedBox(height: 30.h,)
+          ],),
+        ),
       ),
     ),));
   }
@@ -97,35 +104,52 @@ class _DepositState extends State<Deposit> {
   }
 
   Widget depositButton(){
-    return   TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
-      backgroundColor: WidgetStateProperty.all(Colors.teal),
-    ),onPressed: (){
-      if(amountController.text.trim().isEmpty){
-        errorDialog("Invalid amount",context);
-        return;
+    return BlocConsumer<DepositBloc,PaymentState>(
+      listener: (context,state){
+        errorDialog((state as Ended).message, context);
+      },
+      listenWhen: (prev,curr){
+        return curr is Ended;
+      },
+      builder: (context,state){
+        return TextButton(style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
+          backgroundColor: WidgetStateProperty.all(Colors.teal),
+        ),onPressed: (){
+          int amount = 0;
+          try{
+            amount = int.parse(amountController.text.trim());
+          } catch(e){
+            errorDialog("Invalid amount",context);
+            return;
+          }
+          context.read<DepositBloc>().add(StartPayment(amount));
+        }, child:
+        Row(mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.add_circle,color: Colors.white,),
+            SizedBox(width: 5.w),
+            Text("Deposit",style: GoogleFonts.rubik(
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,)),),
+            SizedBox(width: 10.w,),
+            Visibility(visible: false,child: SizedBox(width: 10.w,
+                height: 10.h
+                ,child: const CircularProgressIndicator(color: Colors.white,)))
+          ],));
       }
-    }, child:
-    Row(mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Icon(Icons.add_circle,color: Colors.white,),
-        SizedBox(width: 5.w),
-        Text("Deposit",style: GoogleFonts.rubik(
-            textStyle: TextStyle(
-              color: Colors.white,
-              fontSize: 14.sp,
-              fontStyle: FontStyle.normal,
-              fontWeight: FontWeight.w500,)),),
-        SizedBox(width: 10.w,),
-        Visibility(visible: false,child: SizedBox(width: 10.w,
-            height: 10.h
-            ,child: const CircularProgressIndicator(color: Colors.white,)))
-      ],));
+    );
   }
 
   Widget gateways(){
     return Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: payments.map((e){
-      return CircleAvatar(backgroundColor: Colors.red,minRadius: 26.w,);
+      return CircleAvatar(backgroundColor: Colors.white,
+        minRadius: 26.w,child:
+      (e.endsWith(".png"))?Image.asset(e,height: 26.w,width: 26.w,fit: BoxFit.contain,):
+      SvgPicture.asset(e,width: 26.w,height: 26.w,fit: BoxFit.contain,),);
     }).toList());
   }
 }

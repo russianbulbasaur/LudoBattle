@@ -1,7 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:ludo_macha/blocs/login/LoginBlocEvents.dart';
-import 'package:ludo_macha/blocs/login/LoginBlocStates.dart';
+import 'package:ludo_macha/blocs/login/login_bloc_events.dart';
+import 'package:ludo_macha/blocs/login/login_bloc_states.dart';
 import 'package:ludo_macha/repositories/login/login_repository.dart';
 
 class LoginBloc extends Bloc<LoginBlocEvent,LoginBlocState>{
@@ -44,7 +43,7 @@ class LoginBloc extends Bloc<LoginBlocEvent,LoginBlocState>{
   }
 
   signup(SignupEvent event,emit) async{
-    bool? signupSuccess = await repo.signup(event.phone,event.id,event.otp,event.name,
+    bool? signupSuccess = await repo.signup(event.phone,event.otp,event.id,event.name,
         errorCallback);
     if(signupSuccess!=null && signupSuccess) {
       emit(const FinishState(LoginStates.finish));

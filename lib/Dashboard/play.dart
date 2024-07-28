@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,11 +8,17 @@ import 'package:lottie/lottie.dart';
 import 'package:ludo_macha/Models/Game.dart';
 import 'package:ludo_macha/Models/LiveGame.dart';
 import 'package:ludo_macha/Screens/ViewGame.dart';
-import 'package:ludo_macha/blocs/play/OpenChallengesBloc.dart';
+import 'package:ludo_macha/blocs/game/game_bloc.dart';
+import 'package:ludo_macha/blocs/game/game_creation_bloc.dart';
+import 'package:ludo_macha/blocs/game/game_events.dart';
+import 'package:ludo_macha/blocs/game/game_states.dart';
+import 'package:ludo_macha/blocs/play/open_challenges_bloc.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
+import 'package:ludo_macha/common/ErrorDialog.dart';
 import 'package:ludo_macha/common/IconAndText.dart';
 
-import '../blocs/play/LiveGamesBloc.dart';
+import '../blocs/game/game_monitor_bloc.dart';
+import '../blocs/play/live_games_bloc.dart';
 
 class Play extends StatefulWidget {
   const Play({super.key});
@@ -19,22 +27,27 @@ class Play extends StatefulWidget {
   State<Play> createState() => _PlayState();
 }
 
-class _PlayState extends State<Play> {
+class _PlayState extends State<Play> with TickerProviderStateMixin{
   List<String> dummy = ["","",""];
   TextEditingController amountController = TextEditingController();
-
+  final GameCreationBloc _gameCreationBloc = GameCreationBloc();
   final OpenChallengesBloc _openChallengesBloc = OpenChallengesBloc();
   final LiveGamesBloc _liveGamesBloc = LiveGamesBloc();
+  GameMonitorBloc? _gameMonitorBloc;
+  final HashMap<BigInt,List> animationCache = new HashMap();
 
   @override
   void initState() {
     _openChallengesBloc.challengeScrapper();
+    _liveGamesBloc.liveGameScrapper();
     super.initState();
   }
 
   @override
   void dispose() {
     _openChallengesBloc.openChallengeIsolate.kill();
+    _liveGamesBloc.liveGamesIsolate.kill();
+    if(GameMonitorBloc.gameMonitor!=null) GameMonitorBloc.gameMonitor!.kill();
     super.dispose();
   }
 
@@ -49,7 +62,8 @@ class _PlayState extends State<Play> {
         padding: EdgeInsets.all(10.h),
         child: MultiBlocProvider(providers: [
           BlocProvider(create: (context) => _openChallengesBloc),
-          BlocProvider(create: (context) => _liveGamesBloc)
+          BlocProvider(create: (context) => _liveGamesBloc),
+          BlocProvider(create: (context) => _gameCreationBloc)
         ],
           child: Column(children: [
             ludoLottie(),
@@ -98,8 +112,7 @@ class _PlayState extends State<Play> {
                 ),),
                 const Spacer(),
                 TextButton(onPressed: (){
-                  _openChallengesBloc.openChallengeIsolate.kill();
-                  _openChallengesBloc.challengeScrapper();
+                  openChallengeServiceRestart();
                 },style: ButtonStyle(backgroundColor: WidgetStateProperty.all(Colors.white10),shape:
                 WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
                   child: IconText(icon:  Icon(Icons.refresh,size: 15.w,color: Colors.white,),
@@ -118,48 +131,225 @@ class _PlayState extends State<Play> {
       },
     );
   }
-  
   Widget openChallengeTile(Game game){
-    return Container(height: 60.h,decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.r),
-        color: Colors.black45
-    ),padding: EdgeInsets.all(10.w),
-      child: Row(children: [
-        SizedBox(width: 10.w,),
-        IconText(icon: const Icon(Icons.currency_rupee,color:Color(0xff2AE716)),
-          text: game.winning.toString(),
-          style:
-          GoogleFonts.rubik(color: const Color(0xff2AE716)),),
-        SizedBox(width: 10.w,),
-        Column(crossAxisAlignment:CrossAxisAlignment.start,children: [
-          Row(mainAxisAlignment: MainAxisAlignment.start,children: [
-            CircleAvatar(backgroundColor: Colors.blue,
-            radius: 10.sp,child:
-            Center(child: Icon(Icons.person,size:15.sp,),),),
-            SizedBox(width: 3.w,),
-            Text(game.hostName,style: GoogleFonts.rubik(
-              fontWeight: FontWeight.w500,
-              color: Colors.white
-            ),)
-          ],),
-          SizedBox(height: 4.h,),
-          Row(mainAxisAlignment: MainAxisAlignment.start,children: [
-            Text("Winning : ",style: GoogleFonts.rubik(color: Colors.white30,),),
-            IconText(icon: Icon(Icons.currency_rupee,color: Colors.orange,size: 9.sp,),
-              text: game.winning.toString(),
-              style: GoogleFonts.rubik(fontSize: 10.sp,color: Colors.orange),)
-          ],)
-        ],),
-        const Spacer(),
-      TextButton(onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context){
-          return ViewGame(game: game);
+    if(game.type==GameType.host) return openChallengeTileHost(game);
+    return openChallengeTileOther(game);
+  }
+
+
+  Widget openChallengeTileHost(Game game){
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => GameBloc(game)),
+        BlocProvider(create: (context) => GameMonitorBloc(game,game))
+      ],
+      child: BlocListener<GameMonitorBloc,Game>(listener: (context,state){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context){
+          return ViewGame(game: state);
         }));
-      },style: ButtonStyle(backgroundColor:
-      WidgetStateProperty.all((game.type==GameType.host)?Colors.red:Colors.lightBlue),shape:
-      WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
-          child: Text((game.type==GameType.host)?"\t\t\tCancel\t\t\t":"\t\t\tAccept\t\t\t",style: GoogleFonts.rubik(color: Colors.white)))
-      ],),);
+      },listenWhen: (prev,curr){
+        return curr.status==GameStatus.waiting;
+      },
+      child: BlocConsumer<GameBloc,GameState>(listener: (context,state){
+        openChallengeServiceRestart();
+      },listenWhen: (prev,curr){
+        return (curr is GameDeletedState);
+      },
+          builder: (context,state){
+            return Container(height: 60.h,decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.r),
+                color: Colors.black45
+            ),padding: EdgeInsets.all(10.w),
+              child: Row(children: [
+                SizedBox(width: 10.w,),
+                IconText(icon: const Icon(Icons.currency_rupee,color:Color(0xff2AE716)),
+                  text: game.winning.toString(),
+                  style:
+                  GoogleFonts.rubik(color: const Color(0xff2AE716)),),
+                SizedBox(width: 10.w,),
+                Column(crossAxisAlignment:CrossAxisAlignment.start,children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.start,children: [
+                    CircleAvatar(backgroundColor: Colors.blue,
+                      radius: 10.sp,child:
+                      Center(child: Icon(Icons.person,size:15.sp,),),),
+                    SizedBox(width: 3.w,),
+                    Text(game.hostName,style: GoogleFonts.rubik(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white
+                    ),)
+                  ],),
+                  SizedBox(height: 4.h,),
+                  Row(mainAxisAlignment: MainAxisAlignment.start,children: [
+                    Text("Winning : ",style: GoogleFonts.rubik(color: Colors.white30,),),
+                    IconText(icon: Icon(Icons.currency_rupee,color: Colors.orange,size: 9.sp,),
+                      text: game.winning.toString(),
+                      style: GoogleFonts.rubik(fontSize: 10.sp,color: Colors.orange),)
+                  ],)
+                ],),
+                const Spacer(),
+                TextButton(onPressed: (){
+                  context.read<GameBloc>().add(DeleteGameEvent(game.id));
+                },style: ButtonStyle(backgroundColor:
+                WidgetStateProperty.all((game.type==GameType.host)?Colors.red:Colors.lightBlue),shape:
+                WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
+                    child: Text("\t\t\tCancel\t\t\t",style: GoogleFonts.rubik(color: Colors.white)))
+              ],),);
+          }),),
+    );
+  }
+
+  List heightAnimationFactory(){
+    AnimationController heightController = AnimationController(vsync: this,
+        duration: const Duration(milliseconds: 400));
+    Tween<double> heightTween = Tween(begin: 0,end: 40.h);
+    Animation<double> heightAnimation = heightTween.animate(heightController);
+    return [heightController,heightAnimation];
+  }
+
+  Widget openChallengeTileOther(Game game){
+    late Animation heightAnimation;
+    late AnimationController heightController;
+    if(animationCache.containsKey(game.id)) {
+      List animations = animationCache[game.id]!;
+      heightAnimation = animations[1];
+      heightController = animations[0];
+    }else{
+      List animations = heightAnimationFactory();
+      heightAnimation = animations[1];
+      heightController = animations[0];
+      animationCache[game.id] = animations;
+    }
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (context) => GameBloc(game)),
+        BlocProvider(create: (context) => GameMonitorBloc(game,game))
+      ],
+      child: BlocBuilder<GameBloc,GameState>(
+      builder: (context,state){
+        return Container(decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10.r),
+            color: Colors.black45
+        ),padding: EdgeInsets.all(10.w),
+          child: Column(mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(children: [
+                SizedBox(width: 10.w,),
+                IconText(icon: const Icon(Icons.currency_rupee,color:Color(0xff2AE716)),
+                  text: game.winning.toString(),
+                  style:
+                  GoogleFonts.rubik(color: const Color(0xff2AE716)),),
+                SizedBox(width: 10.w,),
+                Column(crossAxisAlignment:CrossAxisAlignment.start,children: [
+                  Row(mainAxisAlignment: MainAxisAlignment.start,children: [
+                    CircleAvatar(backgroundColor: Colors.blue,
+                      radius: 10.sp,child:
+                      Center(child: Icon(Icons.person,size:15.sp,),),),
+                    SizedBox(width: 3.w,),
+                    Text(game.hostName,style: GoogleFonts.rubik(
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white
+                    ),)
+                  ],),
+                  SizedBox(height: 4.h,),
+                  Row(mainAxisAlignment: MainAxisAlignment.start,children: [
+                    Text("Winning : ",style: GoogleFonts.rubik(color: Colors.white30,),),
+                    IconText(icon: Icon(Icons.currency_rupee,color: Colors.orange,size: 9.sp,),
+                      text: game.winning.toString(),
+                      style: GoogleFonts.rubik(fontSize: 10.sp,color: Colors.orange),)
+                  ],)
+                ],),
+                const Spacer(),
+                TextButton(onPressed: (){
+                  context.read<GameBloc>().add(ShowStartPlayingEvent());
+                  heightController.reset();
+                  heightController.forward();
+                },style: ButtonStyle(backgroundColor:
+                WidgetStateProperty.all((game.type==GameType.host)?Colors.red:Colors.lightBlue),shape:
+                WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r))),),
+                    child: Text("\t\t\tAccept\t\t\t",style: GoogleFonts.rubik(color: Colors.white)))
+              ],),
+              SizedBox(height:10.h),
+              AnimatedBuilder(
+                animation: heightAnimation,
+                builder: (context,child){
+                  return SizedBox(height: heightAnimation.value
+                  ,child: playerButtons(state,context.read<GameBloc>()));
+                },
+              )
+            ],
+          ),);
+      }),
+    );
+  }
+
+  Widget playerButtons(GameState state,GameBloc gameBloc){
+    if(state is ShowStartPlayingState) {
+      return TextButton(style: ButtonStyle(minimumSize:
+      WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,0),),
+          backgroundColor: WidgetStateProperty.all(Colors.orange),
+          shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius:
+          BorderRadius.circular(10.r)))
+      ),onPressed: (){
+        gameBloc.add(AcceptGameEvent());
+      }, child:
+      Row(mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.check_box,color: Colors.white,),
+          SizedBox(width: 5.w),
+          Text("Start Playing",style: GoogleFonts.rubik(
+              textStyle: TextStyle(
+                color: Colors.white,
+                fontSize: 14.sp,
+                fontStyle: FontStyle.normal,
+                fontWeight: FontWeight.w500,)),),
+          SizedBox(width: 10.w,),
+          Visibility(visible: false,child: SizedBox(width: 10.w,
+              height: 10.h
+              ,child: const CircularProgressIndicator(color: Colors.white,)))
+        ],));
+    }else if(state is GameAcceptedState) {
+      return awaitingCancelButton();
+    }
+    return Container();
+  }
+
+  Widget awaitingCancelButton(){
+    return SizedBox(height: 40.h,
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Expanded(flex: 1,
+            child: TextButton(style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.blue),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius:
+                BorderRadius.circular(10.r)))
+            ),onPressed: (){
+            }, child:
+            IconText(icon: const Icon(Icons.timelapse_outlined,color: Colors.white,),text: "Awaiting",style:
+            GoogleFonts.rubik(
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,)),)),
+          ),
+          SizedBox(width: 10.w,),
+          Expanded(flex: 1,
+            child: TextButton(style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(Colors.red),
+                shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius:
+                BorderRadius.circular(10.r)))
+            ),onPressed: (){
+            }, child:
+            IconText(icon: const Icon(Icons.cancel,color: Colors.white,),text: "Cancel",style:
+            GoogleFonts.rubik(
+                textStyle: TextStyle(
+                  color: Colors.white,
+                  fontSize: 14.sp,
+                  fontStyle: FontStyle.normal,
+                  fontWeight: FontWeight.w500,)),)),
+          )
+        ],),
+    );
   }
 
   Widget liveGames(){
@@ -211,51 +401,65 @@ class _PlayState extends State<Play> {
   }
 
   Widget host(){
-    return SizedBox(height: 40.h,
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-        Expanded(flex: 1,
-          child: SizedBox(height: 32.h,
-            child: TextField(
-              keyboardType: TextInputType.phone,
-              controller: amountController,
-              maxLength: 10,
-              decoration: InputDecoration(
-                  isDense: true,
-                  counterText: "",border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: BorderSide(color: Colors.black12,width: 1.w)
-              ),hintText: "Amount",focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.r),
-                  borderSide: BorderSide(color: Colors.blue,width: 1.w)
-              )),),
-          ),
-        ),
-        SizedBox(width: 10.w,),
-        Expanded(flex: 1,
-          child: TextButton(style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.all(Colors.blue),
-            shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius:
-            BorderRadius.circular(10.r)))
-          ),onPressed: (){
-            dummy.add("");
-            setState(() {
-
-            });
-            if(amountController.text.trim().isEmpty){
-              //errorDialog("Invalid amount",context);
-              return;
-            }
-          }, child:
-            IconText(icon: const Icon(Icons.gamepad,color: Colors.white,),text: "Host Game",style:
-            GoogleFonts.rubik(
-                textStyle: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                  fontStyle: FontStyle.normal,
-                  fontWeight: FontWeight.w500,)),)),
-        )
-      ],),
+    return BlocConsumer<GameCreationBloc,GameState>(listener: (context,state){
+      if(state is GameErrorState){
+        errorDialog("Some error occured", context);
+        return;
+      }
+      if(state is GameAcceptedState){
+        Navigator.pushReplacement(context,MaterialPageRoute(builder: (context){
+          return ViewGame(game: (state).game);
+        }));
+        return;
+      }
+      openChallengeServiceRestart();
+    }, builder: (context,state){
+        return SizedBox(height: 40.h,
+          child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Expanded(flex: 1,
+                child: SizedBox(height: 32.h,
+                  child: TextField(
+                    keyboardType: TextInputType.phone,
+                    controller: amountController,
+                    maxLength: 10,
+                    decoration: InputDecoration(
+                        isDense: true,
+                        counterText: "",border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                        borderSide: BorderSide(color: Colors.black12,width: 1.w)
+                    ),hintText: "Amount",focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.r),
+                        borderSide: BorderSide(color: Colors.blue,width: 1.w)
+                    )),),
+                ),
+              ),
+              SizedBox(width: 10.w,),
+              Expanded(flex: 1,
+                child: TextButton(style: ButtonStyle(
+                    backgroundColor: WidgetStateProperty.all(Colors.blue),
+                    shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius:
+                    BorderRadius.circular(10.r)))
+                ),onPressed: (){
+                  try{
+                    int amount = int.parse(amountController.text.trim());
+                    if(amount<50) throw "Amount too less";
+                    context.read<GameCreationBloc>().createGame(amount);
+                  }catch(e){
+                    errorDialog("Invalid amount", context);
+                  }
+                }, child:
+                IconText(icon: const Icon(Icons.gamepad,color: Colors.white,),text: "Host Game",style:
+                GoogleFonts.rubik(
+                    textStyle: TextStyle(
+                      color: Colors.white,
+                      fontSize: 14.sp,
+                      fontStyle: FontStyle.normal,
+                      fontWeight: FontWeight.w500,)),)),
+              )
+            ],),
+        );
+      }
     );
   }
 
@@ -267,5 +471,15 @@ class _PlayState extends State<Play> {
       Container(decoration: BoxDecoration(shape: BoxShape.circle,
       border: Border.all(width: 1.h,color: Colors.yellowAccent),color: Colors.green),
       child: const Center(child: Text("No\nRank",textAlign: TextAlign.center,),),),);
+  }
+
+  void openChallengeServiceRestart(){
+    _openChallengesBloc.openChallengeIsolate.kill();
+    _openChallengesBloc.challengeScrapper();
+  }
+
+  void liveGamesServiceRestart(){
+    _liveGamesBloc.liveGamesIsolate.kill();
+    _liveGamesBloc.liveGameScrapper();
   }
 }

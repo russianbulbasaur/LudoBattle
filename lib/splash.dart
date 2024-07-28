@@ -21,7 +21,7 @@ class _SplashState extends State<Splash> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.setString("url", "http://192.168.31.6:2500");
     if(prefs.containsKey("user")){
-      User user = User.fromJson((await prefs.getString("user")!));
+      User user = User.fromJson((prefs.getString("user")!));
       Dashboard.balance = user.balance;
       Dashboard.name = user.name;
       Navigator.pushReplacementNamed(context, "/dashboard");

@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:ludo_macha/Models/User.dart' as UserModel;
-import 'package:ludo_macha/blocs/login/LoginBloc.dart';
+import 'package:ludo_macha/blocs/login/login_bloc.dart';
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,7 +48,7 @@ class LoginRepository {
       if(url==null) throw "Url is null";
       Response response = await post(Uri.parse("$url/auth/signup"),
       body: {'phone':phone,'otp':otp,'id':id,'name':name});
-      if(response.statusCode!=200) throw response;
+      if(response.statusCode!=200) throw response.body;
       Map<String,dynamic> decodedResult = jsonDecode(response.body);
       if(decodedResult.containsKey("token")){
         UserModel.User user = UserModel.User.fromJson(response.body.toString());
@@ -57,8 +57,8 @@ class LoginRepository {
       }
       return false;
     }catch(e){
-      errorCallback(e);
-      print(e);
+      errorCallback(e.toString());
+      print(e.toString());
       return null;
     }
   }

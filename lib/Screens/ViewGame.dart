@@ -7,8 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:ludo_macha/Models/Result.dart';
-import 'package:ludo_macha/blocs/game/ResultButtonsBloc.dart';
-import 'package:ludo_macha/blocs/game/ScreenshotBloc.dart';
+import 'package:ludo_macha/blocs/game/result_buttons_bloc.dart';
+import 'package:ludo_macha/blocs/game/screenshot_bloc.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
 
 import '../Models/Game.dart';
@@ -73,7 +73,7 @@ class _ViewGameState extends State<ViewGame> {
         child: Row(children: [
           Text("Players : ",style:
             GoogleFonts.rubik(color: Colors.white38,fontWeight: FontWeight.w500),),
-          Text("${widget.game.player2} VS ${widget.game.player1}",style:
+          Text("${widget.game.hostName} VS ${widget.game.playerName}",style:
             GoogleFonts.rubik(color: Colors.white,fontWeight: FontWeight.bold),)
         ],),
       ),

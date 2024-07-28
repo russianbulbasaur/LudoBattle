@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/History/history_pager.dart';
 import 'package:ludo_macha/Screens/dashboard.dart';
 import 'package:ludo_macha/common/CustomAppBar.dart';
+
+import '../History/history_enum.dart';
 class History extends StatefulWidget {
   const History({super.key});
 
@@ -126,7 +128,4 @@ class _HistoryState extends State<History> {
       },
     );
   }
-
-
-
 }

@@ -6,8 +6,9 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:ludo_macha/Models/User.dart';
 import 'package:ludo_macha/Screens/dashboard.dart';
-import 'package:ludo_macha/blocs/dashboard/home/BalanceBloc.dart';
+import 'package:ludo_macha/blocs/dashboard/home/balance_bloc.dart';
 import 'package:ludo_macha/common/IconAndText.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,7 +19,7 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
 
-  final BalanceBloc _balanceBloc = BalanceBloc();
+  static BalanceBloc balanceBloc = BalanceBloc();
   List<String> titles = ["Referrals","Leaderboard","Change name","History","Support",
   "How to Play"];
   List<String> icons = ["images/icons/referral.svg","images/icons/leaderboard.svg",
@@ -26,18 +27,13 @@ class _HomeState extends State<Home> {
   "images/icons/play.svg"];
   @override
   void initState() {
-    _balanceBloc.loadBalance();
+    balanceBloc.loadBalance();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(child: Scaffold(appBar: AppBar(
-      centerTitle: true,
-      backgroundColor: Theme.of(context).primaryColorDark,
-      title: Text("Dashboard",style: TextStyle(fontSize: 16.sp),),
-      automaticallyImplyLeading: false,
-    ),
+    return SafeArea(child: Scaffold(
       backgroundColor: Colors.black,
       body:Padding(
       padding: EdgeInsets.all(20.w),
@@ -55,7 +51,7 @@ class _HomeState extends State<Home> {
   }
 
   Widget amountCard(){
-    return BlocProvider(create: (context) => _balanceBloc,
+    return BlocProvider(create: (context) => balanceBloc,
       child: BlocBuilder<BalanceBloc,User>(
         builder: (context,state){
           return Card(color: Colors.white10,child:
@@ -97,8 +93,8 @@ class _HomeState extends State<Home> {
                           fontStyle: FontStyle.normal,
                           fontWeight: FontWeight.w600,)),),
                   SizedBox(width: 3.w,),
-                  GestureDetector(child: Icon(Icons.refresh),onTap: (){
-                    _balanceBloc.loadBalance();
+                  GestureDetector(child: const Icon(Icons.refresh),onTap: (){
+                    balanceBloc.loadBalance();
                   },)
                 ],),)
             ],),),);
@@ -109,7 +105,11 @@ class _HomeState extends State<Home> {
 
 
   Widget logout(){
-    return TextButton(onPressed: (){},
+    return TextButton(onPressed: () async{
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.remove("user");
+      Navigator.pushReplacementNamed(context, "/login");
+    },
         style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,44.h)),
             backgroundColor: WidgetStateProperty.all(Colors.transparent),
             shape: WidgetStateProperty.all(RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r),
@@ -153,8 +153,9 @@ class _HomeState extends State<Home> {
     return Column(mainAxisSize: MainAxisSize.min,children: [
       Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,children: [
         Expanded(
-          child: TextButton(onPressed: (){
-            Navigator.pushNamed(context, "/deposit");
+          child: TextButton(onPressed: () async{
+            await Navigator.pushNamed(context, "/deposit");
+            balanceBloc.loadBalance();
           },
           style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,47.h)),
               backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -171,8 +172,9 @@ class _HomeState extends State<Home> {
         ),
         SizedBox(width: 14.w,),
         Expanded(
-          child: TextButton(onPressed: (){
-            Navigator.pushNamed(context, "/withdraw");
+          child: TextButton(onPressed: () async{
+            await Navigator.pushNamed(context, "/withdraw");
+            balanceBloc.loadBalance();
           },
               style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,47.h)),
                   backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -189,8 +191,9 @@ class _HomeState extends State<Home> {
         )
       ],),
       SizedBox(height: 10.h,),
-      TextButton(onPressed: (){
-        Navigator.pushNamed(context, "/play");
+      TextButton(onPressed: () async{
+        await Navigator.pushNamed(context, "/play");
+        balanceBloc.loadBalance();
       },
           style: ButtonStyle(minimumSize: WidgetStateProperty.all(Size(MediaQuery.of(context).size.width,47.h)),
               backgroundColor: WidgetStateProperty.all(Colors.transparent),
@@ -217,7 +220,7 @@ class _HomeState extends State<Home> {
     }).toList(),);
   }
 
-  void tileTap(int index){
+  void tileTap(int index) async{
     switch(index){
       case 0:
         DashboardState.pageJumper.add(1);
@@ -226,7 +229,8 @@ class _HomeState extends State<Home> {
         Navigator.pushNamed(context, "/leaderboard");
         break;
       case 2:
-        Navigator.pushNamed(context,"/changename");
+        await Navigator.pushNamed(context,"/changename");
+        balanceBloc.loadBalance();
         break;
       case 3:
         DashboardState.pageJumper.add(2);

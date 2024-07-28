@@ -11,8 +11,8 @@ class BalanceBloc extends Cubit<User>{
   loadBalance() async{
     try{
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? userString = await prefs.getString("user");
-      String? url = await prefs.getString("url");
+      String? userString = prefs.getString("user");
+      String? url = prefs.getString("url");
       if(userString==null) throw "user not in prefs";
       if(url==null) throw "url is null";
       User user = User.fromJson(userString);

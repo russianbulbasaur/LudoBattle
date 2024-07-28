@@ -1,8 +1,12 @@
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:ludo_macha/blocs/history/history_bloc.dart';
 import 'package:ludo_macha/common/CustomTable.dart';
 
 import '../common/CustomAppBar.dart';
+import 'history_enum.dart';
 class HistoryPager extends StatefulWidget {
   final HistoryEnum choice;
   const HistoryPager({super.key,required this.choice});
@@ -12,6 +16,12 @@ class HistoryPager extends StatefulWidget {
 }
 
 class _HistoryPagerState extends State<HistoryPager> {
+  final HistoryBloc _historyBloc = HistoryBloc();
+  @override
+  void initState() {
+    _historyBloc.getHistory(widget.choice);
+    super.initState();
+  }
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -22,11 +32,18 @@ class _HistoryPagerState extends State<HistoryPager> {
         },),
         body: Padding(
           padding: EdgeInsets.all(10.h),
-          child: Column(children: [
-            logo(),
-            SizedBox(height: 10.h,),
-            dataList()
-          ],),
+          child: BlocProvider(
+            create: (context) => _historyBloc,
+            child: BlocBuilder<HistoryBloc,List>(
+              builder: (context,state){
+                return Column(children: [
+                  logo(),
+                  SizedBox(height: 10.h,),
+                  dataList(state)
+                ],);
+              }
+            ),
+          ),
         ),
       ),
     );
@@ -47,64 +64,29 @@ class _HistoryPagerState extends State<HistoryPager> {
       ],);
   }
 
-  Widget dataList(){
+  Widget dataList(List data){
     double height = MediaQuery.of(context).size.height/1.8;
     switch(widget.choice){
       case HistoryEnum.games:
         return Expanded(
           child: CustomTable(height: height,
-              columnHeaders: const ["ID","Winner","","Amount"], data: List.filled(20, {"":""})),
+              columnHeaders: const ["ID","Winner","","Amount"],
+              dataKeywords: const []
+              ,data: data),
         );
       case HistoryEnum.referrals:
         return Expanded(
           child: CustomTable(height: height,
-              columnHeaders: const ["User ID","Name","","Date"], data: List.filled(20, {"":""})),
+              columnHeaders: const ["User ID","Name","","Date"],dataKeywords: const [],
+              data: data),
         );
       case HistoryEnum.transactions:
         return Expanded(
           child: CustomTable(height: height,
-              columnHeaders: const ["ID","Date","","Amount"], data: List.filled(20, {})),
+              columnHeaders: const ["ID","Date","","Amount"],
+              dataKeywords: const ["id","date","","amount"],
+              data: data),
         );
     }
   }
-}
-
-
-enum HistoryEnum{
-  games,transactions,referrals
-}
-
-extension on HistoryEnum{
-  String getTitle(){
-    switch(this){
-      case HistoryEnum.games:
-        return "Game History";
-      case HistoryEnum.transactions:
-        return "Transaction History";
-      case HistoryEnum.referrals:
-        return "Referrals History";
-    }
-  }
-
-  String getDefaultText() {
-    switch (this) {
-      case HistoryEnum.games:
-        return "You Haven't Played Any Games Yet";
-      case HistoryEnum.transactions:
-        return "You have no transactions yet";
-      case HistoryEnum.referrals:
-        return "No History Available";
-    }
-  }
-
-    String getIconTitle(){
-      switch (this) {
-        case HistoryEnum.games:
-          return "Recent 20 Games";
-        case HistoryEnum.transactions:
-          return "Recent 20 Transactions";
-        case HistoryEnum.referrals:
-          return "Recent 20 Referrals";
-      }
-    }
 }
